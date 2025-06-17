@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DICOMTROL</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        body {
+            background-color: #f8f8f8;
+        }
+        .brand {
+            color: #cc0000;
+        }
+        .btn-red {
+            background-color: #cc0000;
+        }
+        .btn-red:hover {
+            background-color: #990000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="flex items-center justify-center min-h-screen">
+        <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+            <h2 class="text-2xl font-bold text-center brand mb-6">DICOMTROL</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700">Usuario</label>
+                <input id="username" class="w-full px-3 py-2 border rounded" type="text" placeholder="admin">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Contraseña</label>
+                <input id="password" class="w-full px-3 py-2 border rounded" type="password" placeholder="clave123">
+            </div>
+            <button onclick="login()" class="w-full btn-red text-white py-2 rounded">Iniciar Sesión</button>
+            <p id="loginError" class="text-red-600 text-center mt-4 hidden">Credenciales incorrectas</p>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="hidden p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl brand font-bold">Lista de Estudios</h2>
+            <input type="text" id="search" placeholder="Buscar..." class="px-3 py-2 border rounded w-1/3" oninput="filtrar()">
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-300">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-2 px-4 border">Nombre</th>
+                        <th class="py-2 px-4 border">Fecha</th>
+                        <th class="py-2 px-4 border">Nacimiento</th>
+                        <th class="py-2 px-4 border">Descripción</th>
+                        <th class="py-2 px-4 border">ID Paciente</th>
+                        <th class="py-2 px-4 border">Institución</th>
+                        <th class="py-2 px-4 border">Archivo</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaEstudios"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const estudiosEjemplo = [];
+
+        async function login() {
+            const usuario = document.getElementById("username").value;
+            const clave = document.getElementById("password").value;
+            if (usuario === "admin" && clave === "clave123") {
+                document.getElementById("loginPage").classList.add("hidden");
+                document.getElementById("dashboard").classList.remove("hidden");
+                cargarEstudios();
+            } else {
+                document.getElementById("loginError").classList.remove("hidden");
+            }
+        }
+
+        async function cargarEstudios() {
+            try {
+                const res = await fetch("https://visor-dicom-backend.onrender.com/estudios");
+                const data = await res.json();
+                estudiosEjemplo.length = 0;
+                estudiosEjemplo.push(...data);
+                renderTabla(data);
+            } catch (err) {
+                alert("No se pudo cargar la lista de estudios");
+            }
+        }
+
+        function renderTabla(estudios) {
+            const tbody = document.getElementById("tablaEstudios");
+            tbody.innerHTML = "";
+            for (const e of estudios) {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-2 px-4 border">${e.nombre}</td>
+                        <td class="py-2 px-4 border">${e.fecha}</td>
+                        <td class="py-2 px-4 border">${e.nacimiento}</td>
+                        <td class="py-2 px-4 border">${e.descripcion}</td>
+                        <td class="py-2 px-4 border">${e.paciente_id}</td>
+                        <td class="py-2 px-4 border">${e.institucion}</td>
+                        <td class="py-2 px-4 border"><a class="text-blue-600 underline" href="/subidos/${e.archivo}" target="_blank">${e.archivo}</a></td>
+                    </tr>
+                `;
+            }
+        }
+
+        function filtrar() {
+            const texto = document.getElementById("search").value.toLowerCase();
+            const filtrados = estudiosEjemplo.filter(e =>
+                e.nombre.toLowerCase().includes(texto) ||
+                e.paciente_id.toLowerCase().includes(texto) ||
+                e.fecha.toLowerCase().includes(texto)
+            );
+            renderTabla(filtrados);
+        }
+    </script>
+</body>
+</html>
