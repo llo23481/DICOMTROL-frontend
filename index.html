@@ -5,36 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>DICOMTROL</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
-  <script src="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.js"></script>
-  <script src="https://unpkg.com/cornerstone-wado-image-loader@4.0.1/dist/cornerstoneWADOImageLoader.min.js"></script>
-  <script src="https://unpkg.com/dicom-parser@1.8.7/dist/dicomParser.min.js"></script>
   <style>
     body { background-color: #f8f8f8; }
     .brand { color: #cc0000; }
     .btn-red { background-color: #cc0000; }
     .btn-red:hover { background-color: #990000; }
-    #dicomModal {
-      background-color: rgba(0, 0, 0, 0.7);
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 50;
-    }
-    #dicomCanvas {
-      width: 512px; height: 512px;
-      background-color: black;
+    #modalImagen {
+      background: rgba(0,0,0,0.6);
     }
   </style>
 </head>
 <body>
-  <!-- Modal para visor -->
-  <div id="dicomModal" class="hidden">
-    <div class="bg-white p-4 rounded shadow-lg relative">
-      <button onclick="cerrarVisor()" class="absolute top-2 right-2 text-red-600 text-xl font-bold">×</button>
-      <h2 class="text-lg font-bold mb-2">Visor DICOM</h2>
-      <div id="dicomCanvas" class="rounded"></div>
-    </div>
-  </div>
-
   <!-- Login Page -->
   <div id="loginPage" class="flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
@@ -69,11 +50,19 @@
             <th class="py-2 px-4 border">ID Paciente</th>
             <th class="py-2 px-4 border">Institución</th>
             <th class="py-2 px-4 border">Archivo</th>
-            <th class="py-2 px-4 border">Ver Imagen</th>
+            <th class="py-2 px-4 border">Acciones</th>
           </tr>
         </thead>
         <tbody id="tablaEstudios"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Modal Visor Imagen -->
+  <div id="modalImagen" class="hidden fixed inset-0 flex items-center justify-center z-50">
+    <div class="bg-white p-4 rounded shadow-lg max-w-3xl w-full relative">
+      <button onclick="cerrarModal()" class="absolute top-2 right-2 text-red-600 font-bold">X</button>
+      <img id="imagenDicom" src="" alt="Imagen DICOM" class="w-full rounded border" />
     </div>
   </div>
 
@@ -116,8 +105,10 @@
             <td class="py-2 px-4 border">${e.descripcion}</td>
             <td class="py-2 px-4 border">${e.paciente_id}</td>
             <td class="py-2 px-4 border">${e.institucion}</td>
-            <td class="py-2 px-4 border"><a class="text-blue-600 underline" href="/subidos/${e.archivo}" target="_blank">${e.archivo}</a></td>
-            <td class="py-2 px-4 border"><button onclick="verDICOM('${e.archivo}')" class="text-white px-2 py-1 rounded bg-blue-600 hover:bg-blue-800">Ver</button></td>
+            <td class="py-2 px-4 border">${e.archivo}</td>
+            <td class="py-2 px-4 border">
+              <button onclick="verImagen('${e.archivo}')" class="text-blue-600 underline">Ver Imagen</button>
+            </td>
           </tr>
         `;
       }
@@ -133,27 +124,17 @@
       renderTabla(filtrados);
     }
 
-    function cerrarVisor() {
-      document.getElementById("dicomModal").classList.add("hidden");
+    function verImagen(nombreArchivo) {
+      const url = `https://visor-dicom-backend.onrender.com/imagen/${nombreArchivo}`;
+      document.getElementById("imagenDicom").src = url;
+      document.getElementById("modalImagen").classList.remove("hidden");
     }
 
-    function verDICOM(archivo) {
-      const canvas = document.createElement("canvas");
-      const div = document.getElementById("dicomCanvas");
-      div.innerHTML = "";
-      div.appendChild(canvas);
-      cornerstone.enable(canvas);
-
-      const imageId = `wadouri:https://visor-dicom-backend.onrender.com/subidos/${archivo}`;
-      cornerstone.loadAndCacheImage(imageId).then(function(image) {
-        cornerstone.displayImage(canvas, image);
-      }).catch(e => {
-        alert("Error al cargar la imagen DICOM.");
-        console.error(e);
-      });
-
-      document.getElementById("dicomModal").classList.remove("hidden");
+    function cerrarModal() {
+      document.getElementById("modalImagen").classList.add("hidden");
+      document.getElementById("imagenDicom").src = "";
     }
   </script>
 </body>
 </html>
+
