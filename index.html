@@ -124,8 +124,10 @@
       renderTabla(filtrados);
     }
 
+    // ✅ Actualizado para evitar caché del navegador
     function verImagen(nombreArchivo) {
-      const url = `https://visor-dicom-backend.onrender.com/imagen/${nombreArchivo}`;
+      const timestamp = new Date().getTime(); // Genera marca de tiempo
+      const url = `https://visor-dicom-backend.onrender.com/imagen/${nombreArchivo}?t=${timestamp}`;
       document.getElementById("imagenDicom").src = url;
       document.getElementById("modalImagen").classList.remove("hidden");
     }
