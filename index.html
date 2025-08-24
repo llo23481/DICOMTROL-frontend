@@ -6,102 +6,196 @@
   <title>DICOMTROL</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
   <style>
-    body {
+    html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+    /* --------- LOGIN --------- */
+    #login-screen {
+      min-height: 100vh;
       background: url("1172357-abstracto-blanco-rojo-vector-4K.jpg") no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    .logo {
-      font-size: 2.5rem;
-      font-weight: bold;
+    .login-box {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(6px);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .brand {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
       color: #cc0000;
       text-align: center;
-      margin-bottom: 1rem;
-      letter-spacing: 2px;
     }
-    .logo span {
-      color: #ffffff;
+    .brand span {
+      color: #fff;
       background: #cc0000;
-      padding: 0 6px;
+      padding: 0 8px;
+      border-radius: 6px;
+    }
+    .logo-svg {
+      width: 140px;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
+    }
+    .btn-red { background: #cc0000; transition: .2s; }
+    .btn-red:hover { background: #990000; }
+
+    /* --------- PANEL PRINCIPAL --------- */
+    #main-panel {
+      display: none;
+      min-height: 100vh;
+      background: url("abstract-background-red-on-white-vector.jpg") no-repeat center center fixed;
+      background-size: cover;
+      padding: 0;
+    }
+    .panel-card {
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(4px);
+      border-radius: 0;
+      box-shadow: none;
+      padding: 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .titulo {
+      font-size: 1.875rem; /* text-3xl */
+      font-weight: 800;
+      color: #b10000;
+      letter-spacing: .5px;
+      display: inline-flex; align-items: center; gap: .5rem;
+      position: relative;
+    }
+    .titulo::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: -6px;
+      height: 4px; width: 55%;
+      background: linear-gradient(90deg, #b10000, #ff5252);
       border-radius: 4px;
     }
-    .btn-red {
-      background-color: #cc0000;
-      transition: 0.3s;
+
+    /* --------- TABLA --------- */
+    .tabla-wrapper {
+      flex-grow: 1;
+      overflow: auto;
     }
-    .btn-red:hover {
-      background-color: #990000;
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; }
+    thead th {
+      background: #b10000; color: #fff; text-align: center; padding: 12px;
+      font-weight: 700;
     }
-    #loginCard {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(6px);
-    }
-    #modalImagen {
-      background: rgba(0,0,0,0.6);
-    }
+    tbody td { text-align: center; padding: 12px; border-bottom: 1px solid #eee; }
+    tbody tr:nth-child(even) { background: #fafafa; }
+    tbody tr:hover { background: #fff1f1; }
+
+    /* --------- MODAL --------- */
+    #modalImagenBackdrop { background: rgba(0,0,0,0.6); }
   </style>
 </head>
 <body>
-  <!-- Login Page -->
-  <div id="loginPage" class="flex items-center justify-center min-h-screen">
-    <div id="loginCard" class="p-8 rounded-2xl shadow-2xl w-full max-w-sm">
-      <div class="logo"><span>DICOM</span>TROL</div>
-      <div class="mb-4">
-        <label class="block text-gray-700 font-medium">Usuario</label>
-        <input id="username" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="text" placeholder="admin" />
+
+  <!-- LOGIN -->
+  <section id="login-screen" class="flex items-center justify-center">
+    <div class="login-box w-full max-w-sm p-8">
+      <div class="mb-4 flex flex-col items-center">
+        <!-- Logo -->
+        <svg class="logo-svg mb-2" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg" aria-label="Logo DICOMTROL">
+          <rect x="8" y="18" rx="18" ry="18" width="100" height="54" fill="#cc0000"/>
+          <rect x="52" y="28" width="12" height="34" fill="#ffffff"/>
+          <rect x="41" y="39" width="34" height="12" fill="#ffffff"/>
+          <text x="124" y="56" font-size="30" font-weight="800" fill="#cc0000" font-family="Segoe UI, Tahoma, Verdana, sans-serif">DICOMTROL</text>
+        </svg>
+        <div class="brand"><span>DICOM</span>TROL</div>
       </div>
-      <div class="mb-6">
-        <label class="block text-gray-700 font-medium">Contraseña</label>
-        <input id="password" class="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="password" placeholder="clave123" />
-      </div>
+
+      <label class="block text-gray-700 font-medium">Usuario</label>
+      <input id="username" class="w-full px-3 py-2 mb-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="text" placeholder="admin" />
+
+      <label class="block text-gray-700 font-medium">Contraseña</label>
+      <input id="password" class="w-full px-3 py-2 mb-6 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="password" placeholder="clave123" />
+
       <button onclick="login()" class="w-full btn-red text-white py-2 rounded-lg shadow-md">Iniciar Sesión</button>
       <p id="loginError" class="text-red-600 text-center mt-4 hidden">Credenciales incorrectas</p>
     </div>
-  </div>
+  </section>
 
-  <!-- Dashboard -->
-  <div id="dashboard" class="hidden p-6">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold text-red-700">Lista de Estudios</h2>
-      <input type="text" id="search" placeholder="Buscar..." class="px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400 w-1/3" oninput="filtrar()" />
-    </div>
-    <div class="overflow-x-auto">
-      <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
-        <thead class="bg-red-100">
-          <tr>
-            <th class="py-2 px-4 border">Nombre</th>
-            <th class="py-2 px-4 border">Fecha</th>
-            <th class="py-2 px-4 border">Nacimiento</th>
-            <th class="py-2 px-4 border">Descripción</th>
-            <th class="py-2 px-4 border">ID Paciente</th>
-            <th class="py-2 px-4 border">Institución</th>
-            <th class="py-2 px-4 border">Archivo</th>
-            <th class="py-2 px-4 border">Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaEstudios"></tbody>
-      </table>
-    </div>
-  </div>
+  <!-- PANEL PRINCIPAL -->
+  <section id="main-panel">
+    <div class="panel-card">
+      <!-- Header -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h2 class="titulo">📋 Lista de Estudios</h2>
+        <div class="flex gap-2 w-full md:w-1/2">
+          <input id="search" type="text" placeholder="Buscar por nombre, ID o fecha…" class="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" oninput="filtrar()" />
+          <button class="px-4 py-2 rounded-lg border border-red-600 text-red-700 hover:bg-red-50" onclick="cargarEstudios()">Recargar</button>
+        </div>
+      </div>
 
-  <!-- Modal Visor Imagen -->
-  <div id="modalImagen" class="hidden fixed inset-0 flex items-center justify-center z-50">
-    <div class="bg-white p-4 rounded shadow-lg max-w-3xl w-full relative">
-      <button onclick="cerrarModal()" class="absolute top-2 right-2 text-red-600 font-bold">X</button>
-      <img id="imagenDicom" src="" alt="Imagen DICOM" class="w-full rounded border" />
+      <!-- Tabla -->
+      <div class="tabla-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Fecha Estudio</th>
+              <th>Fecha de Llegada</th>
+              <th>Nacimiento</th>
+              <th>Descripción</th>
+              <th>ID Paciente</th>
+              <th>Institución</th>
+              <th>Archivo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaEstudios"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL IMAGEN -->
+  <div id="modalImagen" class="hidden fixed inset-0 z-50">
+    <div id="modalImagenBackdrop" class="absolute inset-0"></div>
+    <div class="relative mx-auto my-8 bg-white max-w-5xl rounded-xl shadow-2xl overflow-hidden">
+      <div class="flex justify-between items-center px-4 py-2 border-b">
+        <div class="font-semibold text-red-700">Vista previa DICOM</div>
+        <button onclick="cerrarModal()" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
+      </div>
+      <div class="p-4">
+        <img id="imagenDicom" src="" alt="Imagen DICOM" class="w-full rounded-lg border" />
+      </div>
     </div>
   </div>
 
   <script>
-    const estudiosEjemplo = [];
+    const estudios = [];
+
+    function formatFechaDicom(yyyymmdd) {
+      if (!yyyymmdd) return "—";
+      if (/^\d{8}$/.test(yyyymmdd)) {
+        return `${yyyymmdd.slice(0,4)}-${yyyymmdd.slice(4,6)}-${yyyymmdd.slice(6,8)}`;
+        }
+      return yyyymmdd;
+    }
+
+    function formatLlegada(val) {
+      if (!val) return "—";
+      const d = new Date(val);
+      if (!isNaN(d)) return d.toLocaleString();
+      if (/^\d{8}$/.test(val)) return formatFechaDicom(val);
+      return val;
+    }
 
     async function login() {
       const usuario = document.getElementById("username").value;
       const clave = document.getElementById("password").value;
       if (usuario === "admin" && clave === "clave123") {
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("dashboard").classList.remove("hidden");
-        cargarEstudios();
+        document.getElementById("login-screen").style.display = "none";
+        document.getElementById("main-panel").style.display = "block";
+        await cargarEstudios();
       } else {
         document.getElementById("loginError").classList.remove("hidden");
       }
@@ -111,48 +205,55 @@
       try {
         const res = await fetch("https://visor-dicom-backend.onrender.com/estudios");
         const data = await res.json();
-        estudiosEjemplo.length = 0;
-        estudiosEjemplo.push(...data);
-        renderTabla(data);
+        estudios.length = 0;
+        estudios.push(...data);
+        renderTabla(estudios);
       } catch (err) {
         alert("No se pudo cargar la lista de estudios");
       }
     }
 
-    function renderTabla(estudios) {
+    function renderTabla(list) {
       const tbody = document.getElementById("tablaEstudios");
       tbody.innerHTML = "";
-      for (const e of estudios) {
-        tbody.innerHTML += `
-          <tr>
-            <td class="py-2 px-4 border">${e.nombre}</td>
-            <td class="py-2 px-4 border">${e.fecha}</td>
-            <td class="py-2 px-4 border">${e.nacimiento}</td>
-            <td class="py-2 px-4 border">${e.descripcion}</td>
-            <td class="py-2 px-4 border">${e.paciente_id}</td>
-            <td class="py-2 px-4 border">${e.institucion}</td>
-            <td class="py-2 px-4 border">${e.archivo}</td>
-            <td class="py-2 px-4 border">
-              <button onclick="verImagen('${e.archivo}')" class="text-blue-600 underline">Ver Imagen</button>
-            </td>
-          </tr>
+
+      list.forEach(e => {
+        const llegada = e.llegada || e.created_at || "";
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${e.nombre || "—"}</td>
+          <td>${formatFechaDicom(e.fecha)}</td>
+          <td>${formatLlegada(llegada) || "—"}</td>
+          <td>${formatFechaDicom(e.nacimiento)}</td>
+          <td>${e.descripcion || "—"}</td>
+          <td>${e.paciente_id || "—"}</td>
+          <td>${e.institucion || "—"}</td>
+          <td title="${e.archivo || ""}">${e.archivo || "—"}</td>
+          <td>
+            <button class="px-3 py-1 rounded border border-blue-600 text-blue-700 hover:bg-blue-50"
+                    onclick="verImagen('${e.archivo}')">
+              Ver Imagen
+            </button>
+          </td>
         `;
-      }
+        tbody.appendChild(fila);
+      });
     }
 
     function filtrar() {
-      const texto = document.getElementById("search").value.toLowerCase();
-      const filtrados = estudiosEjemplo.filter(e =>
-        e.nombre.toLowerCase().includes(texto) ||
-        e.paciente_id.toLowerCase().includes(texto) ||
-        e.fecha.toLowerCase().includes(texto)
+      const q = (document.getElementById("search").value || "").toLowerCase();
+      const filtrados = estudios.filter(e =>
+        (e.nombre || "").toLowerCase().includes(q) ||
+        (e.paciente_id || "").toLowerCase().includes(q) ||
+        (e.fecha || "").toLowerCase().includes(q)
       );
       renderTabla(filtrados);
     }
 
     function verImagen(nombreArchivo) {
-      const timestamp = new Date().getTime();
-      const url = `https://visor-dicom-backend.onrender.com/imagen/${nombreArchivo}?t=${timestamp}`;
+      if (!nombreArchivo) return;
+      const t = Date.now();
+      const url = `https://visor-dicom-backend.onrender.com/imagen/${encodeURIComponent(nombreArchivo)}?t=${t}`;
       document.getElementById("imagenDicom").src = url;
       document.getElementById("modalImagen").classList.remove("hidden");
     }
