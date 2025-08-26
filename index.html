@@ -1,267 +1,282 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DICOMTROL</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
-  <style>
-    html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DICOMTROL</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" />
+<style>
+html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-    /* --------- LOGIN --------- */
-    #login-screen {
-      min-height: 100vh;
-      background: url("1172357-abstracto-blanco-rojo-vector-4K.jpg") no-repeat center center fixed;
-      background-size: cover;
-    }
-    .login-box {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(6px);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    .brand {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-      color: #cc0000;
-      text-align: center;
-    }
-    .brand span {
-      color: #fff;
-      background: #cc0000;
-      padding: 0 8px;
-      border-radius: 6px;
-    }
-    .logo-svg {
-      width: 140px;
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,.2));
-    }
-    .btn-red { background: #cc0000; transition: .2s; }
-    .btn-red:hover { background: #990000; }
+/* --------- LOGIN --------- */
+#login-screen {
+  min-height: 100vh;
+  background: url("1172357-abstracto-blanco-rojo-vector-4K.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+.login-box {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.brand { font-size: 2rem; font-weight: 800; letter-spacing: 1.2px; color: #cc0000; text-align: center; }
+.brand span { color: #fff; background: #cc0000; padding: 0 8px; border-radius: 6px; }
+.logo-svg { width: 140px; height: auto; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
+.btn-red { background: #cc0000; transition: .2s; }
+.btn-red:hover { background: #990000; }
 
-    /* --------- PANEL PRINCIPAL --------- */
-    #main-panel {
-      display: none;
-      min-height: 100vh;
-      background: url("abstract-background-red-on-white-vector.jpg") no-repeat center center fixed;
-      background-size: cover;
-      padding: 0;
-    }
-    .panel-card {
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(4px);
-      border-radius: 0;
-      box-shadow: none;
-      padding: 24px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .titulo {
-      font-size: 1.875rem; /* text-3xl */
-      font-weight: 800;
-      color: #b10000;
-      letter-spacing: .5px;
-      display: inline-flex; align-items: center; gap: .5rem;
-      position: relative;
-    }
-    .titulo::after {
-      content: "";
-      position: absolute;
-      left: 0; bottom: -6px;
-      height: 4px; width: 55%;
-      background: linear-gradient(90deg, #b10000, #ff5252);
-      border-radius: 4px;
-    }
+/* --------- PANEL PRINCIPAL --------- */
+#main-panel { display: none; min-height: 100vh; background: url("abstract-background-red-on-white-vector.jpg") no-repeat center center fixed; background-size: cover; padding: 0; }
+.panel-card { background: rgba(255,255,255,0.96); backdrop-filter: blur(4px); border-radius: 0; box-shadow: none; padding: 24px; min-height: 100vh; display: flex; flex-direction: column; }
+.titulo { font-size: 1.875rem; font-weight: 800; color: #b10000; letter-spacing: .5px; display: inline-flex; align-items: center; gap: .5rem; position: relative; }
+.titulo::after { content: ""; position: absolute; left: 0; bottom: -6px; height: 4px; width: 55%; background: linear-gradient(90deg, #b10000, #ff5252); border-radius: 4px; }
 
-    /* --------- TABLA --------- */
-    .tabla-wrapper {
-      flex-grow: 1;
-      overflow: auto;
-    }
-    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; }
-    thead th {
-      background: #b10000; color: #fff; text-align: center; padding: 12px;
-      font-weight: 700;
-    }
-    tbody td { text-align: center; padding: 12px; border-bottom: 1px solid #eee; }
-    tbody tr:nth-child(even) { background: #fafafa; }
-    tbody tr:hover { background: #fff1f1; }
+/* --------- TABLA --------- */
+.tabla-wrapper { flex-grow: 1; overflow: auto; }
+table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; min-width: 1000px; }
+thead th { background: #b10000; color: #fff; text-align: center; padding: 12px; font-weight: 700; position: sticky; top: 0; z-index: 1; }
+tbody td { text-align: center; padding: 12px; border-bottom: 1px solid #eee; }
+tbody tr:nth-child(even) { background: #fafafa; }
+tbody tr:hover { background: #fff1f1; cursor: pointer; }
 
-    /* --------- MODAL --------- */
-    #modalImagenBackdrop { background: rgba(0,0,0,0.6); }
-  </style>
+/* --------- MODALES --------- */
+.modal-bg { background: rgba(0,0,0,0.6); }
+.modal-card { background: white; border-radius: 1rem; padding: 1rem; max-width: 5xl; width: 100%; }
+</style>
 </head>
 <body>
 
-  <!-- LOGIN -->
-  <section id="login-screen" class="flex items-center justify-center">
-    <div class="login-box w-full max-w-sm p-8">
-      <div class="mb-4 flex flex-col items-center">
-        <!-- Logo -->
-        <svg class="logo-svg mb-2" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg" aria-label="Logo DICOMTROL">
+<!-- LOGIN -->
+<section id="login-screen" class="flex items-center justify-center">
+  <div class="login-box w-full max-w-sm p-8">
+    <div class="mb-4 flex flex-col items-center">
+      <svg class="logo-svg mb-2" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg" aria-label="Logo DICOMTROL">
+        <rect x="8" y="18" rx="18" ry="18" width="100" height="54" fill="#cc0000"/>
+        <rect x="52" y="28" width="12" height="34" fill="#ffffff"/>
+        <rect x="41" y="39" width="34" height="12" fill="#ffffff"/>
+        <text x="124" y="56" font-size="30" font-weight="800" fill="#cc0000" font-family="Segoe UI, Tahoma, Verdana, sans-serif">DICOMTROL</text>
+      </svg>
+      <div class="brand"><span>DICOM</span>TROL</div>
+    </div>
+
+    <label class="block text-gray-700 font-medium">Usuario</label>
+    <input id="username" class="w-full px-3 py-2 mb-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="text" placeholder="admin" />
+
+    <label class="block text-gray-700 font-medium">Contraseña</label>
+    <input id="password" class="w-full px-3 py-2 mb-6 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="password" placeholder="clave123" />
+
+    <button onclick="login()" class="w-full btn-red text-white py-2 rounded-lg shadow-md">Iniciar Sesión</button>
+    <p id="loginError" class="text-red-600 text-center mt-4 hidden">Credenciales incorrectas</p>
+  </div>
+</section>
+
+<!-- PANEL PRINCIPAL -->
+<section id="main-panel">
+  <div class="panel-card">
+    <!-- HEADER -->
+    <div class="flex justify-between items-center mb-6">
+      <div class="flex items-center gap-2">
+        <svg class="logo-svg" viewBox="0 0 360 90" xmlns="http://www.w3.org/2000/svg">
           <rect x="8" y="18" rx="18" ry="18" width="100" height="54" fill="#cc0000"/>
           <rect x="52" y="28" width="12" height="34" fill="#ffffff"/>
           <rect x="41" y="39" width="34" height="12" fill="#ffffff"/>
           <text x="124" y="56" font-size="30" font-weight="800" fill="#cc0000" font-family="Segoe UI, Tahoma, Verdana, sans-serif">DICOMTROL</text>
         </svg>
-        <div class="brand"><span>DICOM</span>TROL</div>
       </div>
-
-      <label class="block text-gray-700 font-medium">Usuario</label>
-      <input id="username" class="w-full px-3 py-2 mb-4 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="text" placeholder="admin" />
-
-      <label class="block text-gray-700 font-medium">Contraseña</label>
-      <input id="password" class="w-full px-3 py-2 mb-6 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" type="password" placeholder="clave123" />
-
-      <button onclick="login()" class="w-full btn-red text-white py-2 rounded-lg shadow-md">Iniciar Sesión</button>
-      <p id="loginError" class="text-red-600 text-center mt-4 hidden">Credenciales incorrectas</p>
+      <div><span class="font-semibold text-gray-700">Usuario: admin</span></div>
     </div>
-  </section>
 
-  <!-- PANEL PRINCIPAL -->
-  <section id="main-panel">
-    <div class="panel-card">
-      <!-- Header -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 class="titulo">📋 Lista de Estudios</h2>
-        <div class="flex gap-2 w-full md:w-1/2">
-          <input id="search" type="text" placeholder="Buscar por nombre, ID o fecha…" class="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" oninput="filtrar()" />
-          <button class="px-4 py-2 rounded-lg border border-red-600 text-red-700 hover:bg-red-50" onclick="cargarEstudios()">Recargar</button>
-        </div>
-      </div>
-
-      <!-- Tabla -->
-      <div class="tabla-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Fecha Estudio</th>
-              <th>Fecha de Llegada</th>
-              <th>Nacimiento</th>
-              <th>Descripción</th>
-              <th>ID Paciente</th>
-              <th>Institución</th>
-              <th>Archivo</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="tablaEstudios"></tbody>
-        </table>
-      </div>
+    <!-- FILTROS Y BUSCADOR -->
+    <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
+      <input id="search" type="text" placeholder="Buscar por nombre, ID o fecha…" class="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" oninput="aplicarFiltros()">
+      <select id="filterEstado" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
+        <option value="">Todos los Estados</option>
+        <option value="Pendiente">Pendiente</option>
+        <option value="Visto">Visto</option>
+      </select>
+      <select id="filterMedico" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
+        <option value="">Todos los Médicos</option>
+      </select>
+      <select id="filterNumImagenes" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
+        <option value="">Todas las cantidades</option>
+        <option value="1">1 Imagen</option>
+        <option value="2">2 Imágenes</option>
+        <option value="3">3 Imágenes</option>
+        <option value="4">4+</option>
+      </select>
+      <button onclick="cargarEstudios()" class="px-4 py-2 rounded-lg border border-red-600 text-red-700 hover:bg-red-50">Recargar</button>
     </div>
-  </section>
 
-  <!-- MODAL IMAGEN -->
-  <div id="modalImagen" class="hidden fixed inset-0 z-50">
-    <div id="modalImagenBackdrop" class="absolute inset-0"></div>
-    <div class="relative mx-auto my-8 bg-white max-w-5xl rounded-xl shadow-2xl overflow-hidden">
-      <div class="flex justify-between items-center px-4 py-2 border-b">
-        <div class="font-semibold text-red-700">Vista previa DICOM</div>
-        <button onclick="cerrarModal()" class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
-      </div>
-      <div class="p-4">
-        <img id="imagenDicom" src="" alt="Imagen DICOM" class="w-full rounded-lg border" />
-      </div>
+    <!-- TABLA -->
+    <div class="tabla-wrapper overflow-auto flex-1">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Fecha Estudio</th>
+            <th>Fecha Llegada</th>
+            <th>Nacimiento</th>
+            <th>Descripción</th>
+            <th>ID Paciente</th>
+            <th>Institución</th>
+            <th>Archivo</th>
+            <th>Parte Cuerpo</th>
+            <th>Médico</th>
+            <th># Imágenes</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaEstudios"></tbody>
+      </table>
     </div>
   </div>
+</section>
 
-  <script>
-    const estudios = [];
+<!-- MODAL SERIES -->
+<div id="modalSeries" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-bg">
+  <div class="modal-card relative">
+    <button onclick="cerrarModalSeries()" class="absolute top-2 right-2 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
+    <h2 class="text-xl font-bold text-red-700 mb-4">Series del Estudio</h2>
+    <div id="seriesContainer" class="space-y-4"></div>
+  </div>
+</div>
 
-    function formatFechaDicom(yyyymmdd) {
-      if (!yyyymmdd) return "—";
-      if (/^\d{8}$/.test(yyyymmdd)) {
-        return `${yyyymmdd.slice(0,4)}-${yyyymmdd.slice(4,6)}-${yyyymmdd.slice(6,8)}`;
-        }
-      return yyyymmdd;
+<script>
+let estudios = [];
+let estudiosFiltrados = [];
+
+async function login() {
+  const usuario = document.getElementById("username").value;
+  const clave = document.getElementById("password").value;
+  if(usuario==="admin" && clave==="clave123"){
+    document.getElementById("login-screen").style.display="none";
+    document.getElementById("main-panel").style.display="block";
+    await cargarEstudios();
+  }else{
+    document.getElementById("loginError").classList.remove("hidden");
+  }
+}
+
+async function cargarEstudios(){
+  try{
+    const res = await fetch("https://visor-dicom-backend.onrender.com/estudios");
+    const data = await res.json();
+    estudios.length=0;
+    estudios.push(...data);
+    actualizarFiltros();
+    aplicarFiltros();
+  }catch(err){
+    alert("No se pudo cargar los estudios");
+  }
+}
+
+function actualizarFiltros(){
+  const medicoSet = new Set(estudios.map(e=>e.medico_remitente).filter(Boolean));
+  const medicoSelect = document.getElementById("filterMedico");
+  medicoSelect.innerHTML='<option value="">Todos los Médicos</option>';
+  medicoSet.forEach(m=>{
+    const opt=document.createElement("option");
+    opt.value=m; opt.textContent=m; medicoSelect.appendChild(opt);
+  });
+}
+
+function aplicarFiltros(){
+  const q=(document.getElementById("search").value||"").toLowerCase();
+  const estado=document.getElementById("filterEstado").value;
+  const medico=document.getElementById("filterMedico").value;
+  const numImg=document.getElementById("filterNumImagenes").value;
+
+  estudiosFiltrados = estudios.filter(e=>{
+    let match=true;
+    if(q && !( (e.nombre||"").toLowerCase().includes(q) || (e.paciente_id||"").toLowerCase().includes(q) || (e.fecha||"").toLowerCase().includes(q) )) match=false;
+    if(estado && e.estado!==estado) match=false;
+    if(medico && e.medico_remitente!==medico) match=false;
+    if(numImg){
+      if(numImg==="4" && e.num_imagenes<4) match=false;
+      else if(numImg!=="4" && e.num_imagenes!=parseInt(numImg)) match=false;
     }
+    return match;
+  });
+  renderTabla();
+}
 
-    function formatLlegada(val) {
-      if (!val) return "—";
-      const d = new Date(val);
-      if (!isNaN(d)) return d.toLocaleString();
-      if (/^\d{8}$/.test(val)) return formatFechaDicom(val);
-      return val;
+function renderTabla(){
+  const tbody=document.getElementById("tablaEstudios");
+  tbody.innerHTML="";
+  estudiosFiltrados.forEach(e=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${e.nombre||""}</td>
+      <td>${e.fecha||""}</td>
+      <td>${e.created_at||""}</td>
+      <td>${e.nacimiento||""}</td>
+      <td>${e.descripcion||""}</td>
+      <td>${e.paciente_id||""}</td>
+      <td>${e.institucion||""}</td>
+      <td>${e.archivo||""}</td>
+      <td>${e.body_part||""}</td>
+      <td>${e.medico_remitente||""}</td>
+      <td>${e.num_imagenes||0}</td>
+      <td>${e.estado||""}</td>
+      <td><button onclick="abrirModalSeries(${e.id})" class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Ver</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function abrirModalSeries(estudioId){
+  const modal=document.getElementById("modalSeries");
+  const cont=document.getElementById("seriesContainer");
+  cont.innerHTML="Cargando series...";
+  modal.classList.remove("hidden");
+
+  try{
+    const res=await fetch(`https://visor-dicom-backend.onrender.com/estudios/${estudioId}/series`);
+    const series = await res.json();
+    cont.innerHTML="";
+    for(const s of series){
+      const div=document.createElement("div");
+      div.className="border p-2 rounded";
+      div.innerHTML=`<h3 class="font-semibold text-red-600 mb-2">${s.series_description||s.modality||"Serie"}</h3>
+      <div id="imagenes_${s.id}" class="flex flex-wrap gap-2"></div>`;
+      cont.appendChild(div);
+      await cargarImagenesSerie(s.id);
     }
+  }catch(err){
+    cont.innerHTML="No se pudieron cargar las series";
+  }
+}
 
-    async function login() {
-      const usuario = document.getElementById("username").value;
-      const clave = document.getElementById("password").value;
-      if (usuario === "admin" && clave === "clave123") {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("main-panel").style.display = "block";
-        await cargarEstudios();
-      } else {
-        document.getElementById("loginError").classList.remove("hidden");
-      }
+function cerrarModalSeries(){
+  document.getElementById("modalSeries").classList.add("hidden");
+}
+
+async function cargarImagenesSerie(serieId){
+  const cont=document.getElementById(`imagenes_${serieId}`);
+  cont.innerHTML="Cargando imágenes...";
+  try{
+    const res=await fetch(`https://visor-dicom-backend.onrender.com/series/${serieId}/imagenes`);
+    const imagenes = await res.json();
+    cont.innerHTML="";
+    for(const img of imagenes){
+      const frameSelect = img.is_multiframe ? `<select onchange="updateFrame(this,${img.id})">${[...Array(img.num_frames).keys()].map(f=>`<option value="${f}">Frame ${f}</option>`).join('')}</select>` : "";
+      const imgElem=document.createElement("div");
+      imgElem.className="flex flex-col items-center border p-1 rounded";
+      imgElem.innerHTML=`<img id="img_${img.id}" src="https://visor-dicom-backend.onrender.com/imagen/${img.id}?frame=0" class="max-w-[120px] max-h-[120px] mb-1 rounded border"/><div>${frameSelect}</div>`;
+      cont.appendChild(imgElem);
     }
+  }catch(err){
+    cont.innerHTML="No se pudieron cargar las imágenes";
+  }
+}
 
-    async function cargarEstudios() {
-      try {
-        const res = await fetch("https://visor-dicom-backend.onrender.com/estudios");
-        const data = await res.json();
-        estudios.length = 0;
-        estudios.push(...data);
-        renderTabla(estudios);
-      } catch (err) {
-        alert("No se pudo cargar la lista de estudios");
-      }
-    }
-
-    function renderTabla(list) {
-      const tbody = document.getElementById("tablaEstudios");
-      tbody.innerHTML = "";
-
-      list.forEach(e => {
-        const llegada = e.llegada || e.created_at || "";
-        const fila = document.createElement("tr");
-        fila.innerHTML = `
-          <td>${e.nombre || "—"}</td>
-          <td>${formatFechaDicom(e.fecha)}</td>
-          <td>${formatLlegada(llegada) || "—"}</td>
-          <td>${formatFechaDicom(e.nacimiento)}</td>
-          <td>${e.descripcion || "—"}</td>
-          <td>${e.paciente_id || "—"}</td>
-          <td>${e.institucion || "—"}</td>
-          <td title="${e.archivo || ""}">${e.archivo || "—"}</td>
-          <td>
-            <button class="px-3 py-1 rounded border border-blue-600 text-blue-700 hover:bg-blue-50"
-                    onclick="verImagen('${e.archivo}')">
-              Ver Imagen
-            </button>
-          </td>
-        `;
-        tbody.appendChild(fila);
-      });
-    }
-
-    function filtrar() {
-      const q = (document.getElementById("search").value || "").toLowerCase();
-      const filtrados = estudios.filter(e =>
-        (e.nombre || "").toLowerCase().includes(q) ||
-        (e.paciente_id || "").toLowerCase().includes(q) ||
-        (e.fecha || "").toLowerCase().includes(q)
-      );
-      renderTabla(filtrados);
-    }
-
-    function verImagen(nombreArchivo) {
-      if (!nombreArchivo) return;
-      const t = Date.now();
-      const url = `https://visor-dicom-backend.onrender.com/imagen/${encodeURIComponent(nombreArchivo)}?t=${t}`;
-      document.getElementById("imagenDicom").src = url;
-      document.getElementById("modalImagen").classList.remove("hidden");
-    }
-
-    function cerrarModal() {
-      document.getElementById("modalImagen").classList.add("hidden");
-      document.getElementById("imagenDicom").src = "";
-    }
-  </script>
+function updateFrame(sel, imagenId){
+  const frame = sel.value;
+  const imgElem = document.getElementById(`img_${imagenId}`);
+  imgElem.src = `https://visor-dicom-backend.onrender.com/imagen/${imagenId}?frame=${frame}`;
+}
+</script>
 </body>
 </html>
