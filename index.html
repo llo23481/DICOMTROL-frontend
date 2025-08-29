@@ -43,6 +43,11 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 /* --------- MODALES --------- */
 .modal-bg { background: rgba(0,0,0,0.6); }
 .modal-card { background: white; border-radius: 1rem; padding: 1rem; max-width: 5xl; width: 100%; }
+
+/* VISOR */
+#visorModal .card { display: flex; gap: 1rem; align-items: flex-start; }
+#visorModal img { max-width: 720px; max-height: 80vh; border-radius: 8px; }
+#visorMeta { min-width: 320px; max-width: 420px; overflow:auto; }
 </style>
 </head>
 <body>
@@ -132,15 +137,33 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 </section>
 
 <!-- MODAL SERIES -->
-<div id="modalSeries" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-bg">
-  <div class="modal-card relative">
+<div id="modalSeries" class="hidden fixed inset-0 z-40 flex items-start justify-center modal-bg pt-20">
+  <div class="modal-card relative max-w-6xl w-full">
     <button onclick="cerrarModalSeries()" class="absolute top-2 right-2 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
     <h2 class="text-xl font-bold text-red-700 mb-4">Series del Estudio</h2>
     <div id="seriesContainer" class="space-y-4"></div>
   </div>
 </div>
 
+<!-- VISOR MODAL (imagen grande + metadatos) -->
+<div id="visorModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-bg p-6">
+  <div class="modal-card relative max-w-7xl w-full">
+    <button onclick="cerrarVisor()" class="absolute top-3 right-3 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
+    <div class="card p-4">
+      <div id="visorImageContainer" class="flex-1 flex items-center justify-center">
+        <img id="visorImage" src="" alt="Imagen grande"/>
+      </div>
+      <div id="visorMeta" class="p-4 border-l">
+        <h3 id="metaNombre" class="font-bold text-lg text-red-700 mb-2"></h3>
+        <div id="metaBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+const API_BASE = "https://visor-dicom-backend.onrender.com";
+
 let estudios = [];
 let estudiosFiltrados = [];
 
@@ -158,7 +181,8 @@ async function login() {
 
 async function cargarEstudios(){
   try{
-    const res = await fetch("https://visor-dicom-backend.onrender.com/estudios");
+    const res = await fetch(`${API_BASE}/estudios`);
+    if(!res.ok) throw new Error("error al obtener estudios");
     const data = await res.json();
     estudios.length=0;
     estudios.push(...data);
@@ -166,6 +190,7 @@ async function cargarEstudios(){
     aplicarFiltros();
   }catch(err){
     alert("No se pudo cargar los estudios");
+    console.error(err);
   }
 }
 
@@ -227,7 +252,8 @@ async function abrirModalSeries(estudioId){
   modal.classList.remove("hidden");
 
   try{
-    const res=await fetch(`https://visor-dicom-backend.onrender.com/estudios/${estudioId}/series`);
+    const res=await fetch(`${API_BASE}/estudios/${estudioId}/series`);
+    if(!res.ok) throw new Error("no series");
     const series = await res.json();
     cont.innerHTML="";
     for(const s of series){
@@ -236,10 +262,12 @@ async function abrirModalSeries(estudioId){
       div.innerHTML=`<h3 class="font-semibold text-red-600 mb-2">${s.series_description||s.modality||"Serie"}</h3>
       <div id="imagenes_${s.id}" class="flex flex-wrap gap-2"></div>`;
       cont.appendChild(div);
-      await cargarImagenesSerie(s.id);
+      // cargar imágenes de esta serie
+      cargarImagenesSerie(s.id, estudioId, s);
     }
   }catch(err){
     cont.innerHTML="No se pudieron cargar las series";
+    console.error(err);
   }
 }
 
@@ -247,25 +275,71 @@ function cerrarModalSeries(){
   document.getElementById("modalSeries").classList.add("hidden");
 }
 
-async function cargarImagenesSerie(serieId){
+async function cargarImagenesSerie(serieId, estudioId, serieObj){
   const cont=document.getElementById(`imagenes_${serieId}`);
   cont.innerHTML="Cargando imágenes...";
   try{
-    const res=await fetch(`https://visor-dicom-backend.onrender.com/series/${serieId}/imagenes`);
+    const res=await fetch(`${API_BASE}/series/${serieId}/imagenes`);
+    if(!res.ok) throw new Error("no imagenes");
     const imagenes = await res.json();
     cont.innerHTML="";
     for(const img of imagenes){
-      // 🚨 Ahora backend debe devolver "contenido_base64"
       const imgElem=document.createElement("div");
       imgElem.className="flex flex-col items-center border p-1 rounded";
+      // si preview existe, usarla; si no, usar el endpoint directo
+      const src = img.preview_base64 ? `data:image/png;base64,${img.preview_base64}` : `${API_BASE}/imagen/${img.id}?frame=0`;
       imgElem.innerHTML=`
-        <img src="data:image/png;base64,${img.contenido_base64}" class="max-w-[120px] max-h-[120px] mb-1 rounded border"/>
+        <img id="img_${img.id}" src="${src}" class="max-w-[160px] max-h-[160px] mb-1 rounded border cursor-pointer" onclick="abrirVisor(${img.id}, ${estudioId}, ${serieId})"/>
+        <div class="text-xs text-gray-600">#${img.instance_number||img.id}</div>
       `;
       cont.appendChild(imgElem);
     }
   }catch(err){
     cont.innerHTML="No se pudieron cargar las imágenes";
+    console.error(err);
   }
+}
+
+async function abrirVisor(imagenId, estudioId, serieId){
+  // cargar la imagen grande y metadatos
+  try{
+    // set image src to endpoint (will render DICOM -> PNG)
+    const visorImg = document.getElementById("visorImage");
+    visorImg.src = `${API_BASE}/imagen/${imagenId}`;
+
+    // cargar estudio detalles
+    const resEst = await fetch(`${API_BASE}/estudios/${estudioId}`);
+    const est = resEst.ok ? await resEst.json() : null;
+
+    // cargar serie info
+    const resSer = await fetch(`${API_BASE}/series/${serieId}`);
+    const ser = resSer.ok ? await resSer.json() : null;
+
+    // rellenar metadata
+    document.getElementById("metaNombre").textContent = est?.nombre || "Estudio";
+    const metaBody = document.getElementById("metaBody");
+    metaBody.innerHTML = `
+      <p><strong>ID Estudio:</strong> ${est?.id||""}</p>
+      <p><strong>Patient ID:</strong> ${est?.paciente_id||""}</p>
+      <p><strong>Fecha Nac.:</strong> ${est?.nacimiento||""}</p>
+      <p><strong>Fecha Estudio:</strong> ${est?.fecha||""}</p>
+      <p><strong>Fecha Llegada:</strong> ${est?.created_at||""}</p>
+      <p><strong>Institución:</strong> ${est?.institucion||""}</p>
+      <hr class="my-2"/>
+      <p><strong>Serie:</strong> ${ser?.series_description||ser?.modality||""}</p>
+      <p><strong>Parte cuerpo:</strong> ${ser?.body_part||""}</p>
+      <p><strong>Médico remitente:</strong> ${ser?.medico_remitente||""}</p>
+    `;
+    document.getElementById("visorModal").classList.remove("hidden");
+  }catch(err){
+    alert("No se pudo abrir visor");
+    console.error(err);
+  }
+}
+
+function cerrarVisor(){
+  document.getElementById("visorModal").classList.add("hidden");
+  document.getElementById("visorImage").src = "";
 }
 </script>
 </body>
