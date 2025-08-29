@@ -120,9 +120,6 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
             <th>Descripción</th>
             <th>ID Paciente</th>
             <th>Institución</th>
-            <th>Archivo</th>
-            <th>Parte Cuerpo</th>
-            <th>Médico</th>
             <th># Imágenes</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -215,9 +212,6 @@ function renderTabla(){
       <td>${e.descripcion||""}</td>
       <td>${e.paciente_id||""}</td>
       <td>${e.institucion||""}</td>
-      <td>${e.archivo||""}</td>
-      <td>${e.body_part||""}</td>
-      <td>${e.medico_remitente||""}</td>
       <td>${e.num_imagenes||0}</td>
       <td>${e.estado||""}</td>
       <td><button onclick="abrirModalSeries(${e.id})" class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">Ver</button></td>
@@ -261,21 +255,17 @@ async function cargarImagenesSerie(serieId){
     const imagenes = await res.json();
     cont.innerHTML="";
     for(const img of imagenes){
-      const frameSelect = img.is_multiframe ? `<select onchange="updateFrame(this,${img.id})">${[...Array(img.num_frames).keys()].map(f=>`<option value="${f}">Frame ${f}</option>`).join('')}</select>` : "";
+      // 🚨 Ahora backend debe devolver "contenido_base64"
       const imgElem=document.createElement("div");
       imgElem.className="flex flex-col items-center border p-1 rounded";
-      imgElem.innerHTML=`<img id="img_${img.id}" src="https://visor-dicom-backend.onrender.com/imagen/${img.id}?frame=0" class="max-w-[120px] max-h-[120px] mb-1 rounded border"/><div>${frameSelect}</div>`;
+      imgElem.innerHTML=`
+        <img src="data:image/png;base64,${img.contenido_base64}" class="max-w-[120px] max-h-[120px] mb-1 rounded border"/>
+      `;
       cont.appendChild(imgElem);
     }
   }catch(err){
     cont.innerHTML="No se pudieron cargar las imágenes";
   }
-}
-
-function updateFrame(sel, imagenId){
-  const frame = sel.value;
-  const imgElem = document.getElementById(`img_${imagenId}`);
-  imgElem.src = `https://visor-dicom-backend.onrender.com/imagen/${imagenId}?frame=${frame}`;
 }
 </script>
 </body>
