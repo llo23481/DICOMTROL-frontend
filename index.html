@@ -41,9 +41,22 @@ tbody td { text-align: center; padding: 12px; border-bottom: 1px solid #eee; }
 tbody tr:nth-child(even) { background: #fafafa; }
 tbody tr:hover { background: #fff1f1; cursor: pointer; }
 
-/* --------- MODALES --------- */
-.modal-bg { background: rgba(0,0,0,0.6); }
-.modal-card { background: white; border-radius: 1rem; padding: 1rem; max-width: 5xl; width: 100%; overflow-y: auto; max-height: 90vh; }
+/* --------- MODALES CON TRANSPARENCIA --------- */
+.modal-bg { 
+  background: rgba(0,0,0,0.55); 
+  backdrop-filter: blur(6px); 
+}
+.modal-card { 
+  background: rgba(255,255,255,0.86); 
+  backdrop-filter: blur(10px); 
+  border-radius: 1rem; 
+  padding: 1rem; 
+  max-width: 90%; 
+  width: 100%; 
+  overflow-y: auto; 
+  max-height: 90vh; 
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25); 
+}
 
 /* VISOR */
 #visorModal .card { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
@@ -78,8 +91,26 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   object-fit: cover;
 }
 
-/* SERIES VERTICAL SCROLL */
-#seriesContainer { max-height: 70vh; overflow-y: auto; }
+/* SERIES VERTICAL SCROLL (contenedor de series) */
+#seriesContainer { max-height: 70vh; overflow-y: auto; padding-right: 8px; }
+
+/* Botón Exportar pequeño junto a la burbuja de usuario */
+.btn-export-small {
+  height: 40px;
+  padding-left: 10px;
+  padding-right: 12px;
+  font-size: 0.875rem;
+  border-radius: 9999px;
+}
+/* -------- NUEVO VISOR DICOM -------- */
+#dicomViewerModal .modal-card { display: flex; flex-direction: column; height: 95vh; }
+.dicom-tools { display: flex; flex-direction: column; gap: 10px; background: #222; padding: 12px; border-radius: 10px; height: fit-content; }
+.dicom-tools button { background: #444; color: #fff; border: none; padding: 10px; border-radius: 8px; font-size: 18px; cursor: pointer; transition: 0.2s; }
+.dicom-tools button:hover { background: #cc0000; }
+.dicom-canvas { flex: 1; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 10px; margin: 0 10px; }
+.dicom-canvas img { max-width: 100%; max-height: 100%; }
+.dicom-navigation { display: flex; justify-content: center; margin-top: 10px; }
+.dicom-navigation button { background: red; color: white; border: none; padding: 8px 12px; margin: 0 5px; border-radius: 6px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -112,17 +143,12 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
     <div class="brand"><span>DICOM</span>TROL</div>
   </div>
 
-  <div class="flex items-center gap-4">
-    <!-- BOTÓN EXPORTAR -->
-    <button id="btnExportar" 
-      class="flex items-center gap-2 px-6 py-3 
-           bg-gradient-to-r from-red-600 via-red-500 to-red-700
-           text-white font-semibold rounded-xl shadow-lg
-           transform transition-all duration-300 ease-in-out
-           hover:shadow-2xl hover:-translate-y-1 hover:scale-105
-           active:translate-y-0 active:scale-100">
-      📩Exportar
-    </button>
+  <div class="flex items-center gap-3">
+        <!-- BOTÓN EXPORTAR (pequeño, igual altura que burbuja) -->
+        <button id="btnExportar" class="btn-export-small flex items-center gap-2 px-3 bg-gradient-to-r from-red-600 via-red-500 to-red-700 text-white font-semibold shadow-md hover:shadow-lg transition transform active:translate-y-0">
+          <span style="font-size:16px">📩​​</span>
+          <span style="font-size:13px">Exportar</span>
+        </button>
 
     <!-- BURBUJA USUARIO -->
     <div class="relative">
@@ -138,7 +164,7 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 <!-- POPUP EXPORTAR -->
 <div id="popupExportar" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-white rounded-xl shadow-lg p-6 w-80">
-    <h2 class="text-lg font-semibold mb-4 text-gray-800">Exportar estudios</h2>
+    <h2 class="text-lg font-semibold mb-4 text-gray-800">Exportar Lista de Estudios</h2>
     <p class="text-sm text-gray-600 mb-4">Selecciona el rango de tiempo que deseas exportar:</p>
 
     <div class="space-y-3">
@@ -171,32 +197,32 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 
   // Llamada al backend
   async function exportarEstudios(rango) {
-    try {
-      const response = await fetch(`/exportar?rango=${rango}`, {
-        method: "GET"
-      });
+      try {
+        const response = await fetch(`${API_BASE}/exportar?rango=${rango}`, {
+          method: "GET"
+        });
 
-      if (!response.ok) {
-        throw new Error("Error al exportar los estudios");
+        if (!response.ok) {
+          throw new Error("Error al exportar los estudios");
+        }
+
+        // Descargar el archivo Excel
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `estudios_${rango}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        cerrarPopup();
+      } catch (error) {
+        alert("Hubo un problema: " + error.message);
       }
-
-      // Descargar el archivo Excel
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `estudios_${rango}.xlsx`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-
-      cerrarPopup();
-    } catch (error) {
-      alert("Hubo un problema: " + error.message);
     }
-  }
-</script>
+  </script>
 
  <!-- FILTROS Y BUSCADOR -->
     <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
@@ -241,10 +267,15 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   </div>
 </section>
 
-<!-- MODALES SERIES Y VISOR -->
+<!-- MODAL SERIES -->
 <div id="modalSeries" class="hidden fixed inset-0 z-40 flex items-start justify-center modal-bg pt-20">
   <div class="modal-card relative max-w-6xl w-full">
-    <button onclick="cerrarModalSeries()" class="absolute top-2 right-2 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
+    <div class="absolute top-2 right-2 flex gap-2">
+      <button onclick="abrirDicomViewer()" class="flex items-center gap-1 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+        <i class="fas fa-pen"></i> Editar
+      </button>
+      <button onclick="cerrarModalSeries()" class="px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700">Cerrar</button>
+    </div>
     <h2 class="text-xl font-bold text-red-700 mb-4">Series del Estudio</h2>
     <div id="seriesContainer" class="space-y-4"></div>
   </div>
@@ -265,6 +296,30 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   </div>
 </div>
 
+<!-- NUEVO VISOR DICOM -->
+<div id="dicomViewerModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center modal-bg p-6">
+  <div class="modal-card relative max-w-7xl w-full">
+    <button onclick="cerrarDicomViewer()" class="absolute top-3 right-3 px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700">Cerrar</button>
+    <div class="flex flex-row h-full">
+      <div class="dicom-tools">
+        <button title="Zoom"><i class="fas fa-search-plus"></i></button>
+        <button title="Mover"><i class="fas fa-arrows-alt"></i></button>
+        <button title="Medir distancia"><i class="fas fa-ruler"></i></button>
+        <button title="Medir área"><i class="fas fa-draw-polygon"></i></button>
+        <button title="Brillo"><i class="fas fa-sun"></i></button>
+        <button title="Contraste"><i class="fas fa-adjust"></i></button>
+      </div>
+      <div class="dicom-canvas flex-1">
+        <img id="dicomViewerImage" src="https://via.placeholder.com/800x600?text=DICOM" alt="DICOM"/>
+      </div>
+    </div>
+    <div class="dicom-navigation">
+      <button><i class="fas fa-arrow-left"></i></button>
+      <button><i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API_BASE = "https://visor-dicom-backend.onrender.com";
 let estudios = [];
@@ -272,7 +327,9 @@ let estudiosFiltrados = [];
 
 function formatFecha(fechaStr){
   if(!fechaStr) return "";
-  const f=new Date(fechaStr);
+  // acepta ISO string o timestamp
+  const f = new Date(fechaStr);
+  if(isNaN(f.getTime())) return fechaStr; // si no es fecha válida, devolver tal cual
   const dia=("0"+f.getDate()).slice(-2);
   const mes=("0"+(f.getMonth()+1)).slice(-2);
   const anio=f.getFullYear();
@@ -281,13 +338,39 @@ function formatFecha(fechaStr){
   return `${dia}-${mes}-${anio} - ${h}:${m}`;
 }
 
+/**
+ * formatea nacimiento a DD-MM-YYYY de manera robusta.
+ * Acepta:
+ *  - "" -> ""
+ *  - "YYYYMMDD" -> "DD-MM-YYYY"
+ *  - "YYYY-MM-DD" -> "DD-MM-YYYY"
+ *  - "DD-MM-YYYY" -> devuelve tal cual
+ *  - ISO parseable -> lo convierte a DD-MM-YYYY
+ *  - en caso contrario devuelve la cadena original
+ */
 function formatNacimiento(fechaStr){
   if(!fechaStr) return "";
-  const f=new Date(fechaStr);
-  const anio=f.getFullYear();
-  const mes=("0"+(f.getMonth()+1)).slice(-2);
-  const dia=("0"+f.getDate()).slice(-2);
-  return `${anio}-${mes}-${dia}`;
+  const s = String(fechaStr).trim();
+  // YYYYMMDD
+  if(/^\d{8}$/.test(s)){
+    return `${s.slice(6,8)}-${s.slice(4,6)}-${s.slice(0,4)}`;
+  }
+  // YYYY-MM-DD
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){
+    return `${s.slice(8,10)}-${s.slice(5,7)}-${s.slice(0,4)}`;
+  }
+  // DD-MM-YYYY
+  if(/^\d{2}-\d{2}-\d{4}$/.test(s)) return s;
+  // Try parse as Date
+  const d = new Date(s);
+  if(!isNaN(d.getTime())){
+    const dia=("0"+d.getDate()).slice(-2);
+    const mes=("0"+(d.getMonth()+1)).slice(-2);
+    const anio=d.getFullYear();
+    return `${dia}-${mes}-${anio}`;
+  }
+  // fallback: return as-is
+  return s;
 }
 
 async function login() {
@@ -367,7 +450,7 @@ function renderTabla(){
   });
 }
 
-// abrir modal series con scroll horizontal
+// abrir modal series con scroll vertical en container y scroll horizontal en imágenes
 async function abrirModalSeries(estudioId){
   const modal=document.getElementById("modalSeries");
   const cont=document.getElementById("seriesContainer");
@@ -381,10 +464,12 @@ async function abrirModalSeries(estudioId){
     cont.innerHTML="";
     for(const s of series){
       const div=document.createElement("div");
-      div.className="border p-2 rounded";
+      div.className="border p-2 rounded bg-white/70"; // ligera transparencia visual extra en la tarjeta
       div.innerHTML=`<h3 class="font-semibold text-red-600 mb-2">${s.series_description||s.modality||"Serie"}</h3>
+      <div class="text-xs text-gray-600 mb-2">Médico: ${s.medico_remitente||""} • Imágenes: ${s.num_imagenes||0}</div>
       <div id="imagenes_${s.id}" class="series-scroll"></div>`;
       cont.appendChild(div);
+      // cargar imágenes de esta serie
       cargarImagenesSerie(s.id, estudioId, s);
     }
   }catch(err){
@@ -409,7 +494,7 @@ async function cargarImagenesSerie(serieId, estudioId, serieObj){
       const imgElem=document.createElement("div");
       imgElem.className="series-item";
       const src = img.preview_base64 ? `data:image/png;base64,${img.preview_base64}` : `${API_BASE}/imagen/${img.id}?frame=0`;
-      imgElem.innerHTML=`<img id="img_${img.id}" src="${src}" onclick="abrirVisor(${img.id}, ${estudioId}, ${serieId})"/>`;
+      imgElem.innerHTML=`<img id="img_${img.id}" src="${src}" onclick="abrirVisor(${img.id}, ${estudioId}, ${serieId})" alt="miniatura"/>`;
       cont.appendChild(imgElem);
     }
   }catch(err){
@@ -421,19 +506,24 @@ async function cargarImagenesSerie(serieId, estudioId, serieObj){
 async function abrirVisor(imagenId, estudioId, serieId){
   try{
     const visorImg = document.getElementById("visorImage");
+    // usar endpoint que devuelve PNG
     visorImg.src = `${API_BASE}/imagen/${imagenId}`;
 
+    // cargar estudio detalles
     const resEst = await fetch(`${API_BASE}/estudios/${estudioId}`);
     const est = resEst.ok ? await resEst.json() : null;
+
+    // cargar serie info
     const resSer = await fetch(`${API_BASE}/series/${serieId}`);
     const ser = resSer.ok ? await resSer.json() : null;
 
+    // rellenar metadata
     document.getElementById("metaNombre").textContent = est?.nombre || "Estudio";
     const metaBody = document.getElementById("metaBody");
     metaBody.innerHTML = `
       <p><strong>ID Estudio:</strong> ${est?.id||""}</p>
       <p><strong>Patient ID:</strong> ${est?.paciente_id||""}</p>
-      <p><strong>Fecha Nac.:</strong> ${est?.nacimiento||""}</p>
+      <p><strong>Fecha Nac.:</strong> ${formatNacimiento(est?.nacimiento)}</p>
       <p><strong>Fecha Estudio:</strong> ${formatFecha(est?.fecha)}</p>
       <p><strong>Fecha Llegada:</strong> ${formatFecha(est?.created_at)}</p>
       <p><strong>Institución:</strong> ${est?.institucion||""}</p>
@@ -453,6 +543,43 @@ function cerrarVisor(){
   document.getElementById("visorModal").classList.add("hidden");
   document.getElementById("visorImage").src = "";
 }
+
+/* ================= Exportar (popup + llamada) ================= */
+document.getElementById("btnExportar").addEventListener("click", () => {
+  document.getElementById("popupExportar").classList.remove("hidden");
+});
+
+function cerrarPopup() {
+  document.getElementById("popupExportar").classList.add("hidden");
+}
+
+async function exportarEstudios(rango) {
+  try {
+    const response = await fetch(`${API_BASE}/exportar?rango=${encodeURIComponent(rango)}`, { method: "GET" });
+    if (!response.ok) throw new Error("Error al exportar los estudios");
+    // descarga
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `estudios_${rango}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    cerrarPopup();
+  } catch (error) {
+    alert("Hubo un problema: " + error.message);
+  }
+}
+function abrirDicomViewer(){
+  document.getElementById("modalSeries").classList.add("hidden");
+  document.getElementById("dicomViewerModal").classList.remove("hidden");
+}
+function cerrarDicomViewer(){
+  document.getElementById("dicomViewerModal").classList.add("hidden");
+}
+
 </script>
 </body>
 </html>
