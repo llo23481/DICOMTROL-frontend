@@ -8,38 +8,293 @@
 <style>
 html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
-/* --------- LOGIN --------- */
 #login-screen {
   min-height: 100vh;
-  background: url("1172357-abstracto-blanco-rojo-vector-4K.jpg") no-repeat center center fixed;
+  background: url("abstract-health-medical-science-healthcare-icon-digital-technology-science-concept-modern-innovation-treatment-medicine-on-hi-tech-future-blue-background-for-wallpaper-template-web-design-vector.jpg") no-repeat center center fixed;
   background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 0.6s forwards;
 }
+
 .login-box {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.45); /* más transparente */
   backdrop-filter: blur(12px);
   border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   padding: 2rem;
   width: 100%;
   max-width: 400px;
+  transition: opacity 0.4s, transform 0.4s;
 }
-.brand { font-size: 2rem; font-weight: 800; letter-spacing: 1.2px; color: #cc0000; text-align: center; }
-.brand span { color: #fff; background: #cc0000; padding: 0 8px; border-radius: 6px; }
-.logo-svg { width: 140px; height: auto; display: block; margin: 0 auto 12px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.2)); }
-.btn-red { background: #cc0000; transition: .2s; }
-.btn-red:hover { background: #990000; }
+
+/* Logo DICOMTROL como texto */
+.brand { 
+  font-size: 2.0rem; 
+  font-weight: 700; 
+  letter-spacing: 1.2px; 
+  color: #003366; /* azul oscuro */
+  text-align: center; 
+}
+.brand span { 
+  color: #fff; 
+  background: #003366; 
+  padding: 0 8px; 
+  border-radius: 6px; 
+}
+
+/* Inputs estilo */
+.login-box input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 1rem;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.login-box input:focus {
+  outline: none;
+  border-color: #003366; /* azul al enfocar */
+  box-shadow: 0 0 8px rgba(0,51,102,0.5);
+}
+
+/* Fade Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-15px); }
+}
+
+#login-screen.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+/* Botón */
+.btn-red { background: #003366; transition: .2s; }
+.btn-red:hover { background: #002244; }
 
 /* --------- PANEL PRINCIPAL --------- */
-#main-panel { display: none; min-height: 100vh; background: url("abstract-background-red-on-white-vector.jpg") no-repeat center center fixed; background-size: cover; padding: 0; overflow-y: auto; }
-.panel-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); padding: 24px; margin: 2rem; display: flex; flex-direction: column; }
+#main-panel {
+  min-height: 100vh;
+  background: rgba(255,255,255,0.1)
+    url("abstract-technology-science-concept-dna-futuristic-on-hi-tech-blue-background-vector.jpg")
+    no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
 
+#main-panel.visible {
+  opacity: 1;
+}
+
+/* --------- TARJETAS (PANEL-CARD) --------- */
+#main-panel {
+  min-height: 100vh;
+  background: rgba(255,255,255,0.08)
+    url("abstract-technology-science-concept-dna-futuristic-on-hi-tech-blue-background-vector.jpg")
+    no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
+
+#main-panel.visible {
+  opacity: 1;
+}
+
+/* --------- TARJETAS (PANEL-CARD) --------- */
+.panel-card {
+  position: relative;
+  background: rgba(255,255,255,0.28);
+  backdrop-filter: blur(20px) saturate(160%);
+  border-radius: 18px;
+  border: 1px solid rgba(0,180,255,0.4);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+  padding: 24px;
+  margin: 2rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Hover flotante */
+.panel-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(0,200,255,0.35);
+}
+
+/* --------- ANIMACIÓN DE BRILLO ENERGÉTICO --------- */
+.panel-card::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: calc(100% + 6px);
+  height: calc(100% + 6px);
+  border-radius: 18px;
+  background: linear-gradient(
+    120deg,
+    rgba(0,200,255,0.9),
+    rgba(255,255,255,0.6),
+    rgba(0,180,255,0.9)
+  );
+  background-size: 300% 300%;
+  z-index: 1;
+  opacity: 0.55;
+  animation: bordeBrillante 3s linear infinite;
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+@keyframes bordeBrillante {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Capa superior del contenido */
+.panel-card > * {
+  position: relative;
+  z-index: 2;
+}
+/* --------- EFECTO DE ENCENDIDO AL MOSTRAR EL PANEL --------- */
+#main-panel.visible::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0,200,255,0.4), transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  animation: encendidoBrillo 2.5s ease-out forwards;
+  z-index: 100;
+}
+
+@keyframes encendidoBrillo {
+  0% {
+    opacity: 0.9;
+    transform: scale(1.2);
+    filter: blur(10px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
 /* TABLE SCROLL FLOATER */
-.tabla-wrapper { flex-grow: 1; overflow-y: auto; max-height: calc(100vh - 200px); border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); background: rgba(255,255,255,0.95); }
-table { width: 100%; border-collapse: collapse; overflow: hidden; min-width: 1000px; }
-thead th { background: #b10000; color: #fff; text-align: center; padding: 12px; font-weight: 700; position: sticky; top: 0; z-index: 2; }
-tbody td { text-align: center; padding: 12px; border-bottom: 1px solid #eee; }
-tbody tr:nth-child(even) { background: #fafafa; }
-tbody tr:hover { background: #fff1f1; cursor: pointer; }
+/* ====== TABLA PRINCIPAL (con contraste visual) ====== */
+.tabla-wrapper {
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  min-width: 1000px;
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
+/* ====== CABECERA ====== */
+thead th {
+  background: rgba(0, 34, 68, 0.85); /* Azul con opacidad */
+  color: #eaf6ff;
+  text-align: center;
+  padding: 14px;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(0, 180, 255, 0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Efecto hover en encabezado */
+thead th:hover {
+  background: rgba(0, 60, 120, 0.9);
+  transform: scale(1.03);
+}
+
+/* ====== FILAS (más claras, blancas y legibles) ====== */
+tbody td {
+  text-align: center;
+  padding: 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  color: #111; /* texto negro */
+  background: rgba(255, 255, 255, 0.8); /* blanco con leve opacidad */
+  backdrop-filter: blur(6px);
+  transition: all 0.25s ease;
+}
+
+/* Alternancia de color más sutil */
+tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Hover elegante pero suave */
+tbody tr:hover td {
+  background: rgba(0, 123, 255, 0.15);
+  color: #000;
+  cursor: pointer;
+  transform: scale(1.01);
+  transition: all 0.25s ease;
+}
+
+/* ====== BOTONES DE PAGINACIÓN ====== */
+#btnPrev, #btnNext {
+  background: rgba(0, 123, 255, 0.25);
+  color: #fff;
+  border: 1px solid rgba(0, 123, 255, 0.5);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+}
+
+#btnPrev:hover, #btnNext:hover {
+  background: rgba(0, 123, 255, 0.4);
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.6);
+  transform: scale(1.05);
+}
+
+#btnPrev:active, #btnNext:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
 
 /* --------- MODALES CON TRANSPARENCIA --------- */
 .modal-bg { 
@@ -108,7 +363,7 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 #dicomViewerCard {
   max-width: 90vw;
   height: 95vh;
-  background: rgba(19,20,21,0.74);
+  background: rgba(0,34,66,0.74);
   border-radius: 12px;
   padding: 12px;
   display: flex;
@@ -133,7 +388,7 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#000;
+  background:#001f3f;
   border-radius:8px;
   position:relative;
   overflow:hidden;
@@ -157,7 +412,7 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   object-fit: contain;
   transition: transform 0.08s ease, filter 0.1s ease;
   user-select: none;
-  pointer-events: none; /* evitamos que la imagen coma los eventos, los gestionamos en el wrapper */
+  pointer-events: none;
 }
 
 /* overlay svg para medidas */
@@ -167,26 +422,26 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   left:0;
   width:100%;
   height:100%;
-  pointer-events:auto; /* capturamos clicks en el overlay */
+  pointer-events:auto;
 }
 
-/* sidebar de metadata: fondo negro y letras rojas */
+/* sidebar de metadata: fondo negro y letras azules */
 #dicomInfoPanel {
   width: 300px;
   background: rgba(0,0,0,0.95);
-  color: #ff4d4d;
+  color: #3399ff;
   padding: 14px;
   border-radius: 8px;
   overflow-y:auto;
 }
-#dicomInfoPanel h3 { color: #ff7b7b; }
+#dicomInfoPanel h3 { color: #66ccff; }
 
 /* botones de herramientas circulares */
 .tool-btn {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(200,20,20,0.95);
+  background: rgba(0,51,102,0.95);
   color: white;
   font-size: 20px;
   display: flex;
@@ -215,9 +470,9 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 }
 
 /* visual styles for measurements */
-.measure-line { stroke: #00ffcc; stroke-width: 3; stroke-linecap:round; }
-.measure-dot { fill:#00ffd1; stroke:#000; stroke-width:1; r:4; }
-.measure-text { fill:#00ffd1; font-size:14px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,0.6); }
+.measure-line { stroke: #00ccff; stroke-width: 3; stroke-linecap:round; }
+.measure-dot { fill:#00ccff; stroke:#000; stroke-width:1; r:4; }
+.measure-text { fill:#00ccff; font-size:14px; font-weight:700; text-shadow:0 1px 3px rgba(0,0,0,0.6); }
 
 /* responsive tweaks */
 @media (max-width: 900px){
@@ -226,10 +481,10 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 }
 
 #miniaturasSerie {
-  background-color: #000; /* fondo negro */
+  background-color: #001f3f;
   padding: 5px;
   overflow-y: auto;
-  height: 100%; /* ajusta según tu layout */
+  height: 100%;
 }
 
 .miniatura-item {
@@ -246,9 +501,8 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 }
 
 .miniatura-item.active {
-  border: 2px solid #ff0000; /* borde rojo para la miniatura activa */
+  border: 2px solid #003366;
 }
-/* Panel expandido */
 .fila-expandida td {
   background: #fff;
   padding: 0;
@@ -258,8 +512,8 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 .panel-opciones {
   padding: 10px;
   background: white;
-  border: 1px solid #b71c1c;
-  border-left: 5px solid #b71c1c;
+  border: 1px solid #003366;
+  border-left: 5px solid #003366;
   border-radius: 4px;
   animation: slideDown 0.3s ease;
 }
@@ -271,19 +525,8 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   gap: 6px;
 }
 
-.panel-opciones .icono-ojo {
-  cursor: pointer;
-  font-size: 18px;
-  color: #555;
-  transition: color 0.3s;
-}
-
-.panel-opciones .icono-ojo.visto {
-  color: green;
-}
-
 .panel-opciones .btn-icon {
-  background: #b71c1c;
+  background: #003366;
   color: white;
   border: none;
   padding: 4px 8px;
@@ -294,7 +537,7 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 }
 
 .panel-opciones .btn-icon:hover {
-  background: #d32f2f;
+  background: #002244;
 }
 
 @keyframes expandSlide {
@@ -311,14 +554,114 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   from { transform: scaleY(0); opacity: 0; }
   to { transform: scaleY(1); opacity: 1; }
 }
+/* ====== CONTENEDOR DE FILTROS ====== */
+.filtros-container {
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ====== CAMPOS ====== */
+.filtro-input, .filtro-select {
+  background: rgba(255, 255, 255, 0.65);
+  color: #002244;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+  font-size: 0.95rem;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+.filtro-input::placeholder {
+  color: rgba(0,0,0,0.5);
+}
+
+.filtro-input:focus, .filtro-select:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 10px rgba(0,123,255,0.4);
+  outline: none;
+  background: rgba(255,255,255,0.9);
+  color: #001933;
+}
+
+
+/* ====== BOTÓN RECARGAR ====== */
+.btn-filtro {
+  background: rgba(0,123,255,0.25);
+  color: #fff;
+  border: 1px solid rgba(0,123,255,0.6);
+  border-radius: 10px;
+  padding: 11px 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-filtro:hover {
+  background: rgba(0,123,255,0.4);
+  box-shadow: 0 0 14px rgba(0,123,255,0.7);
+  transform: scale(1.07);
+}
+
+.btn-filtro:active {
+  transform: scale(0.97);
+  box-shadow: 0 0 6px rgba(0,123,255,0.4);
+}
+
+/* ====== ICONO DE RECARGAR ANIMADO ====== */
+.icono-recargar {
+  display: inline-block;
+  transition: transform 0.4s ease;
+}
+
+.btn-filtro:hover .icono-recargar {
+  transform: rotate(360deg);
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
+<body>
 <!-- Toast (solo una vez en toda la app) -->
   <div id="toast" 
        class="fixed bottom-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-500">
     ✅ Enlace copiado al portapapeles
   </div>
+<!-- SCRIPT de cierre de login -->
+<script>
+function cerrarLogin() {
+  const login = document.getElementById('login-screen');
+  const main = document.getElementById('main-panel');
+
+  // Añade la clase fade-out al login
+  login.classList.add('fade-out');
+
+  // Espera a que termine la animación antes de ocultar y mostrar panel
+  setTimeout(() => {
+    login.style.display = 'none';
+    main.style.display = 'block';
+  }, 500); // 500ms = duración de fade-out
+}
+async function recargarConAnimacion() {
+  const icono = document.querySelector('.icono-recargar');
+  icono.classList.add('spin');
+
+  try {
+    await cargarEstudios(); // tu función ya existente
+  } finally {
+    setTimeout(() => icono.classList.remove('spin'), 1000);
+  }
+}
+</script>
 <body>
 
 <!-- LOGIN -->
@@ -350,14 +693,14 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
 
   <div class="flex items-center gap-3">
         <!-- BOTÓN EXPORTAR (pequeño, igual altura que burbuja) -->
-        <button id="btnExportar" class="btn-export-small flex items-center gap-2 px-3 bg-gradient-to-r from-red-600 via-red-500 to-red-700 text-white font-semibold shadow-md hover:shadow-lg transition transform active:translate-y-0">
+        <button id="btnExportar" class="btn-export-small flex items-center gap-2 px-3 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition transform active:translate-y-0">
           <span style="font-size:16px">📩​​</span>
           <span style="font-size:13px">Exportar</span>
         </button>
 
     <!-- BURBUJA USUARIO -->
     <div class="relative">
-      <div class="flex items-center justify-center w-20 h-10 bg-red-600 rounded-full shadow-md">
+      <div class="flex items-center justify-center w-20 h-10 bg-blue-600 rounded-full shadow-md">
       </div>
       <span class="absolute inset-0 flex items-center justify-center text-white font-semibold text-sm">
         admin
@@ -430,25 +773,36 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
   </script>
 
  <!-- FILTROS Y BUSCADOR -->
-    <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
-      <input id="search" type="text" placeholder="Buscar por nombre, ID o fecha…" class="flex-1 px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-400" oninput="aplicarFiltros()">
-      <select id="filterEstado" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
-        <option value="">Todos los Estados</option>
-        <option value="Pendiente">Pendiente</option>
-        <option value="Visto">Visto</option>
-      </select>
-      <select id="filterMedico" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
-        <option value="">Todos los Médicos</option>
-      </select>
-      <select id="filterNumImagenes" class="px-3 py-2 border rounded-lg shadow-sm" onchange="aplicarFiltros()">
-        <option value="">Todas las cantidades</option>
-        <option value="1">1 Imagen</option>
-        <option value="2">2 Imágenes</option>
-        <option value="3">3 Imágenes</option>
-        <option value="4">4+</option>
-      </select>
-      <button onclick="cargarEstudios()" class="px-4 py-2 rounded-lg border border-red-600 text-red-700 hover:bg-red-50">Recargar</button>
-    </div>
+<div class="filtros-container flex flex-col md:flex-row items-center gap-4 mb-4 w-full">
+  <input id="search" 
+         type="text" 
+         placeholder="Buscar por nombre, ID o fecha…" 
+         class="filtro-input flex-1 w-full md:w-auto"
+         oninput="aplicarFiltros()">
+
+  <select id="filterEstado" class="filtro-select" onchange="aplicarFiltros()">
+    <option value="">Todos los Estados</option>
+    <option value="Pendiente">Pendiente</option>
+    <option value="Visto">Visto</option>
+  </select>
+
+  <select id="filterMedico" class="filtro-select" onchange="aplicarFiltros()">
+    <option value="">Todos los Médicos</option>
+  </select>
+
+  <select id="filterNumImagenes" class="filtro-select" onchange="aplicarFiltros()">
+    <option value="">Todas las cantidades</option>
+    <option value="1">1 Imagen</option>
+    <option value="2">2 Imágenes</option>
+    <option value="3">3 Imágenes</option>
+    <option value="4">4+</option>
+  </select>
+
+  <button id="btnRecargar" class="btn-filtro flex items-center gap-2" onclick="recargarConAnimacion()">
+    <span class="icono-recargar">🔄</span>
+    <span>Recargar</span>
+  </button>
+</div>
 
     <!-- TABLA -->
     <div class="tabla-wrapper overflow-auto flex-1">
@@ -468,6 +822,15 @@ tbody tr:hover { background: #fff1f1; cursor: pointer; }
         </thead>
         <tbody id="tablaEstudios"></tbody>
       </table>
+<!-- Controles de paginación -->
+<div class="flex justify-center mt-4 gap-2">
+  <button id="btnPrev" onclick="prevPage()" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">
+    ⬅ Anterior
+  </button>
+  <button id="btnNext" onclick="nextPage()" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">
+    Siguiente ➡
+  </button>
+</div>
     </div>
   </div>
 </section>
@@ -978,11 +1341,25 @@ function cerrarVisor(){
 async function login() {
   const usuario = document.getElementById("username").value;
   const clave = document.getElementById("password").value;
-  if(usuario==="admin" && clave==="clave123"){
-    document.getElementById("login-screen").style.display="none";
-    document.getElementById("main-panel").style.display="block";
-    await cargarEstudios();
-  }else{
+  const loginScreen = document.getElementById("login-screen");
+  const mainPanel = document.getElementById("main-panel");
+
+  if (usuario === "admin" && clave === "clave123") {
+    // Fade-out login
+    loginScreen.classList.add("fade-out");
+
+    setTimeout(() => {
+      loginScreen.style.display = "none";
+
+      // Mostrar panel principal y hacer fade-in
+      mainPanel.style.display = "flex";
+      mainPanel.classList.add("visible");
+
+      // Llamar a la función async que carga estudios
+      cargarEstudios(); 
+
+    }, 500); // duración de fade-out
+  } else {
     document.getElementById("loginError").classList.remove("hidden");
   }
 }
@@ -1427,6 +1804,44 @@ async function cargarInformes() {
  
 /* Inicial: aplicamos transform para evitar NaN */
 applyTransform();
+
+/* ========== PAGINACIÓN ========== */
+let page = 0;
+const limit = 50;
+
+async function loadStudies() {
+  try {
+    const res = await fetch(`${API_BASE}/estudios?skip=${page * limit}&limit=${limit}`);
+    if (!res.ok) throw new Error("Error al obtener estudios paginados");
+    const data = await res.json();
+
+    // Agregar estudios a la tabla
+    const tbody = document.getElementById("tablaEstudios");
+    data.forEach(e => renderEstudioConExpansion(e));
+
+    // Si hay menos de 'limit', no hay más páginas
+    if (data.length < limit) {
+      document.getElementById("btnNext").disabled = true;
+    } else {
+      document.getElementById("btnNext").disabled = false;
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Error cargando más estudios");
+  }
+}
+
+function nextPage() {
+  page++;
+  loadStudies();
+}
+
+function prevPage() {
+  if (page > 0) {
+    page--;
+    loadStudies();
+  }
+}
 
 </script>
 </body>
