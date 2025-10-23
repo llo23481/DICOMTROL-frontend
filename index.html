@@ -214,6 +214,16 @@ html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, V
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  min-width: 1000px;
+  color: #fff;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
+}
+
 /* Cabecera azul sólida */
 thead th {
   background: rgba(0, 34, 68, 0.88);
@@ -240,6 +250,14 @@ tbody td {
 /* Alternancia ligera */
 tbody tr:nth-child(even) td {
   background: rgba(250, 250, 250, 0.95);
+}
+
+tbody tr:hover td {
+  background: rgba(0, 123, 255, 0.15);
+  color: #000;
+  cursor: pointer;
+  transform: scale(1.01);
+  transition: all 0.25s ease;
 }
 
 /* Botones de paginación limpios */
