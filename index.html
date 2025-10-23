@@ -237,7 +237,10 @@ thead th {
   z-index: 2;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
+thead th:hover {
+  background: rgba(0, 60, 120, 0.9);
+  transform: scale(1.03);
+}
 /* Filas simples sin hover ni efectos */
 tbody td {
   text-align: center;
@@ -617,6 +620,33 @@ tbody tr:hover td {
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
+}
+
+.btn-ver {
+  background: rgba(0, 123, 255, 0.2); /* azul transparente */
+  color: white;
+  border: 1px solid rgba(0, 123, 255, 0.5);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ver:hover {
+  background: rgba(0, 123, 255, 0.4); /* más azul al pasar el cursor */
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.6); /* brillo suave */
+  transform: scale(1.05); /* crece un poco */
+}
+@keyframes brillarAzul {
+  0% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.4); }
+  50% { box-shadow: 0 0 15px rgba(0, 123, 255, 0.8); }
+  100% { box-shadow: 0 0 5px rgba(0, 123, 255, 0.4); }
+}
+
+.btn-ver:hover {
+  background: rgba(0, 123, 255, 0.4);
+  animation: brillarAzul 1.2s infinite ease-in-out;
+  transform: scale(1.05);
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
