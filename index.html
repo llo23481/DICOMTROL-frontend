@@ -648,6 +648,122 @@ tbody tr:hover td {
   animation: brillarAzul 1.2s infinite ease-in-out;
   transform: scale(1.05);
 }
+/* ======== VISOR DICOM AZUL/NEGRO ======== */
+.modal-bg {
+  background: rgba(0, 0, 20, 0.8);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ----- Tarjetas dentro del modal ----- */
+.modal-card {
+  background: rgba(10, 20, 40, 0.9);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 150, 255, 0.25);
+  box-shadow: 0 0 25px rgba(0, 150, 255, 0.15);
+  color: #e0f7ff;
+  padding: 1.5rem;
+  animation: slideUp 0.4s ease;
+}
+
+/* ----- Títulos ----- */
+.modal-card h2, .modal-card h3 {
+  color: #00b7ff;
+  text-shadow: 0 0 8px rgba(0, 183, 255, 0.6);
+}
+
+/* ----- Botones generales ----- */
+button {
+  transition: all 0.25s ease;
+}
+
+/* ----- Botones normales ----- */
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 150, 255, 0.6);
+}
+
+/* ----- Botones rojos ----- */
+.bg-red-600 {
+  background: linear-gradient(145deg, #b00000, #ff3b3b);
+  box-shadow: 0 0 10px rgba(255, 50, 50, 0.4);
+}
+
+.bg-red-600:hover {
+  background: linear-gradient(145deg, #ff3b3b, #b00000);
+  box-shadow: 0 0 18px rgba(255, 100, 100, 0.6);
+}
+
+/* ----- Botones grises (cerrar modal pequeño) ----- */
+.bg-gray-600 {
+  background: rgba(40, 40, 60, 0.8);
+  border: 1px solid rgba(100, 150, 255, 0.2);
+}
+
+.bg-gray-600:hover {
+  background: rgba(60, 80, 120, 0.9);
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.6);
+}
+
+/* ----- Contenedor principal del visor ----- */
+#dicomViewerCard {
+  background: rgba(10, 20, 40, 0.95);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 150, 255, 0.25);
+  box-shadow: 0 0 25px rgba(0, 150, 255, 0.25);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ----- Miniaturas verticales ----- */
+#miniaturasSerie {
+  background: rgba(0, 0, 30, 0.8);
+  border-right: 1px solid rgba(0, 150, 255, 0.15);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+#miniaturasSerie img:hover {
+  box-shadow: 0 0 12px rgba(0, 150, 255, 0.8);
+  transform: scale(1.05);
+}
+
+/* ----- Información lateral ----- */
+#dicomInfoPanel {
+  background: rgba(15, 25, 40, 0.9);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 150, 255, 0.2);
+  color: #d0eaff;
+}
+
+/* ----- Botones de herramientas ----- */
+.tool-btn {
+  background: rgba(20, 40, 80, 0.8);
+  color: #00b7ff;
+  border: 1px solid rgba(0, 150, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 0 5px;
+}
+
+.tool-btn:hover {
+  background: rgba(0, 123, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+}
+
+/* ----- Animaciones ----- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -1424,7 +1540,7 @@ function renderEstudioConExpansion(estudio) {
       </div>
       <div>
         <button class="btn-icon btn-exportar" data-id="${estudio.id}">⬇ Exportar</button>
-        <button class="btn-icon" onclick="abrirVisorDesdeTabla(${estudio.id})">✏ Editar</button>
+        <button class="btn-icon" onclick="abrirVisorDesdeTabla(${estudio.id})">✏ Observar</button>
       </div>
       <div>
         <label>👨‍⚕ Médico Remitente:</label>
