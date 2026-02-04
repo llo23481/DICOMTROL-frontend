@@ -584,6 +584,35 @@ tbody tr:hover td {
   color: #001933;
 }
 
+/* Estilo para inputs de fecha */
+.filtro-input-date {
+  background: rgba(255, 255, 255, 0.65);
+  color: #002244;
+  border: 1px solid rgba(0,0,0,0.15);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  width: 140px;
+}
+.filtro-input-date:focus {
+  outline: none;
+  border-color: #007BFF;
+  box-shadow: 0 0 10px rgba(0,123,255,0.4);
+  background: rgba(255,255,255,0.9);
+  color: #001933;
+}
+/* Animación suave al aparecer el calendario (fallback visual) */
+.filtro-input-date::-webkit-calendar-picker-indicator {
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.filtro-input-date:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
 
 /* ====== BOTÓN RECARGAR ====== */
 .btn-filtro {
@@ -634,6 +663,86 @@ tbody tr:hover td {
 
 @keyframes spin {
   100% { transform: rotate(360deg); }
+}
+
+/* Estilo base para badges de estado */
+.badge-estado {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 80px;
+  background-color: #1e3a8a; /* Azul oscuro */
+  color: white;
+  border: 1px solid #1e40af;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Opcional: hover efecto suave */
+.badge-estado:hover {
+  opacity: 0.95;
+}
+
+/* Estilo base para botones con imágenes */
+.btn-accion {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border: 1px solid transparent;
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Botón Ver (Ojo Azul Oscuro) */
+.btn-ver {
+  background-color: #003366; /* Azul oscuro */
+  color: white;
+}
+.btn-ver:hover {
+  background-color: #002244;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(0, 51, 102, 0.5);
+}
+
+/* Botón Reportes (Archivo Naranja) */
+.btn-reportes {
+  background-color: #f59e0b;
+  color: white;
+}
+.btn-reportes:hover {
+  background-color: #ea580c;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(234, 88, 12, 0.5);
+}
+
+/* Botón Audios (Nota Musical Roja) */
+.btn-audios {
+  background-color: #dc2626;
+  color: white;
+}
+.btn-audios:hover {
+  background-color: #b91c1c;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(185, 28, 28, 0.5);
+}
+/* Asegurar que los botones dentro de .acciones-col sean inline */
+.acciones-col .btn-accion {
+  display: inline-flex !important;
+  margin: 0 !important;
+}
+.btn-accion img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 .btn-ver {
@@ -815,6 +924,34 @@ button:hover {
     </div>
 
 <style>
+/* Estilo para inputs de fecha minimalistas */
+.filtros-container input[type="date"] {
+  padding: 0;
+  font-size: 0.85rem;
+  height: 24px;
+  line-height: 24px;
+}
+
+/* Ocultar el texto de fecha, pero mantener funcionalidad */
+.filtros-container input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.8;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.filtros-container input[type="date"]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
+}
+
+/* Para Firefox: ocultar el texto si no se ha seleccionado fecha */
+.filtros-container input[type="date"]::placeholder {
+  color: transparent;
+}
+
+/* Mostrar texto al hacer hover o foco */
+.filtros-container input[type="date"]:focus,
+.filtros-container input[type="date"]:hover {
+  color: #333 !important;
+}
 .tool-btn-modern {
   width: 36px;
   height: 36px;
@@ -1402,26 +1539,56 @@ document.addEventListener("DOMContentLoaded", () => {
          oninput="aplicarFiltros()">
 
   <select id="filterEstado" class="filtro-select" onchange="aplicarFiltros()">
-    <option value="">Todos los Estados</option>
-    <option value="Pendiente">Pendiente</option>
-    <option value="Visto">Visto</option>
-  </select>
+  <option value="">Estado</option>
+  <option value="En Espera">En Espera</option>
+  <option value="Error">Error</option>
+  <option value="Subiendo">Subiendo</option>
+  <option value="Sin Informar">Sin Informar</option>
+  <option value="En Proceso">En Proceso</option>
+  <option value="Informado">Informado</option>
+  <option value="Eliminado">Eliminado</option>
+</select>
 
   <select id="filterMedico" class="filtro-select" onchange="aplicarFiltros()">
-    <option value="">Todos los Médicos</option>
-  </select>
+  <option value="">Radiólogos</option>
+  <option value="Dra. Georgina Amalia Viyella Calzada">Dra. Georgina Amalia Viyella Calzada</option>
+  <option value="Dr. Engels Liranzo">Dr. Engels Liranzo</option>
+</select>
 
-  <select id="filterNumImagenes" class="filtro-select" onchange="aplicarFiltros()">
-    <option value="">Todas las cantidades</option>
-    <option value="1">1 Imagen</option>
-    <option value="2">2 Imágenes</option>
-    <option value="3">3 Imágenes</option>
-    <option value="4">4+</option>
-  </select>
-
+    <select id="filterModalidad" class="filtro-select" onchange="aplicarFiltros()">
+         <option value="">Modalidades</option>
+         <option value="MR">MR</option>
+         <option value="CT">CT</option>
+         <option value="DX">DX</option>
+         <option value="CR">CR</option>
+         <option value="PR">PR</option>
+         <option value="PT">PT</option>
+         <option value="US">US</option>
+         <option value="MG">MG</option>
+         <option value="OT">OT</option>
+         <option value="SEG">SEG</option>
+     </select>
+<!-- Filtro Período Compacto (solo iconos + input visible) -->
+<div class="flex flex-col gap-1 w-full md:w-auto">
+  <label class="text-white font-medium text-xs">Período</label>
+  <div class="flex gap-2">
+    <!-- Campo Desde -->
+    <div class="relative flex items-center bg-white rounded-lg px-3 py-2 border border-gray-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition cursor-pointer group">
+      <span class="text-gray-500 text-sm mr-2"> Desde: 📅</span>
+      <input type="date" id="filterFechaDesde" class="border-none outline-none text-sm flex-1 text-transparent placeholder-transparent group-hover:text-gray-700" onchange="aplicarFiltros()" placeholder="dd/mm/yyyy">
+      <button onclick="document.getElementById('filterFechaDesde').value=''; aplicarFiltros();" class="text-gray-400 hover:text-gray-600 ml-1 text-xs">×</button>
+    </div>
+    <!-- Campo Hasta -->
+    <div class="relative flex items-center bg-white rounded-lg px-3 py-2 border border-gray-300 shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition cursor-pointer group">
+      <span class="text-gray-500 text-sm mr-2"> Hasta: 📅</span>
+      <input type="date" id="filterFechaHasta" class="border-none outline-none text-sm flex-1 text-transparent placeholder-transparent group-hover:text-gray-700" onchange="aplicarFiltros()" placeholder="dd/mm/yyyy">
+      <button onclick="document.getElementById('filterFechaHasta').value=''; aplicarFiltros();" class="text-gray-400 hover:text-gray-600 ml-1 text-xs">×</button>
+    </div>
+  </div>
+</div>
   <button id="btnRecargar" class="btn-filtro flex items-center gap-2" onclick="recargarConAnimacion()">
     <span class="icono-recargar">🔄</span>
-    <span>Recargar</span>
+    <span>Refresh</span>
   </button>
 </div>
 
@@ -1429,18 +1596,16 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="tabla-wrapper overflow-auto flex-1">
       <table>
         <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Fecha Llegada</th>
-            <th>Nacimiento</th>
-            <th>Descripción</th>
-            <th>ID Paciente</th>
-            <th>Institución</th>
-            <th># Imágenes</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
+                    <tr>
+                    <th>Nombre</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>ID Paciente</th>
+                    <th>Modalidad</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                    </tr>
+                    </thead>
         <tbody id="tablaEstudios"></tbody>
       </table>
 <!-- Controles de paginación -->
@@ -2109,23 +2274,109 @@ async function login() {
   }
 }
 
+// Formato dd-mm-yyyy
+function formatFechaCorta(fechaStr) {
+  if (!fechaStr) return "";
+  const d = new Date(fechaStr);
+  if (isNaN(d.getTime())) return "";
+  const dia = String(d.getDate()).padStart(2, '0');
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const anio = d.getFullYear();
+  return `${dia}-${mes}-${anio}`;
+}
+
+// Hora en formato 12h: 03:34:45 PM
+function formatHora12(fechaStr) {
+  if (!fechaStr) return "";
+  const d = new Date(fechaStr);
+  if (isNaN(d.getTime())) return "";
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, '0');
+  const s = String(d.getSeconds()).padStart(2, '0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12;
+  h = h ? h : 12;
+  h = String(h).padStart(2, '0');
+  return `${h}:${m}:${s} ${ampm}`;
+}
+
+// Tiempo transcurrido: "hace 2 horas", "hace 45 mins", etc.
+function tiempoTranscurrido(fechaStr) {
+  if (!fechaStr) return "";
+  const ahora = new Date();
+  const entonces = new Date(fechaStr);
+  if (isNaN(entonces.getTime())) return "";
+
+  const diffMs = ahora - entonces;
+  const diffSeg = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSeg / 60);
+  const diffHoras = Math.floor(diffMin / 60);
+  const diffDias = Math.floor(diffHoras / 24);
+
+  if (diffDias > 0) {
+    return `hace ${diffDias} día${diffDias > 1 ? 's' : ''}`;
+  } else if (diffHoras > 0) {
+    return `hace ${diffHoras} hora${diffHoras > 1 ? 's' : ''}`;
+  } else if (diffMin > 0) {
+    return `hace ${diffMin} min`;
+  } else {
+    return `hace unos segundos`;
+  }
+}
+
 // Renderizado de filas con expansión
 function renderEstudioConExpansion(estudio) {
   const tbody = document.getElementById("tablaEstudios");
 
   const tr = document.createElement("tr");
   tr.classList.add("fila-estudio");
-  tr.innerHTML = `
-    <td>${estudio.nombre || "--"}</td>
-    <td>${estudio.fecha || "--"}</td>
-    <td>${estudio.nacimiento || "--"}</td>
-    <td>${estudio.descripcion || "--"}</td>
-    <td>${estudio.paciente_id || "--"}</td>
-    <td>${estudio.institucion || "--"}</td>
-    <td>${estudio.num_imagenes || 0}</td>
-    <td class="estado-col">${estudio.estado || "Pendiente"}</td>
-    <td><button class="btn-ver" onclick="abrirVisorDesdeTabla(${estudio.id})">Ver</button></td>
-  `;
+  // Valor de modalidad: usa estudio.modalidad o "MR" por defecto
+const modalidad = estudio.modalidad || "MR";
+
+tr.innerHTML = `
+<td>${estudio.nombre || "--"}</td>
+<td>
+<div class="text-sm font-medium">${formatFechaCorta(estudio.created_at) || "--"}</div>
+<div class="text-xs text-gray-600 mt-1">Hora de registro: ${formatHora12(estudio.created_at) || "--"}</div>
+<div class="text-[10px] text-gray-500 mt-1">${tiempoTranscurrido(estudio.created_at)}</div>
+</td>
+<td>${estudio.descripcion || "--"}</td>
+<td>${estudio.paciente_id || "--"}</td>
+<td class="text-center font-medium">${modalidad}</td>
+<td class="estado-col">
+  <span class="badge-estado estado-${(estudio.estado || "Pendiente").replace(/\s+/g, '-').toLowerCase()}">
+    ${estudio.estado || "Pendiente"}
+  </span>
+</td>
+<td class="acciones-col" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+  <!-- Botón Ver -->
+  <button 
+    class="btn-accion btn-ver"
+    onclick="abrirVisorDesdeTabla(${estudio.id})"
+    title="Ver estudio"
+  >
+    <img src="assets/icon-ver.png" alt="Ver">
+  </button>
+
+  <!-- Botón Reportes -->
+  <button 
+    class="btn-accion btn-reportes"
+    onclick="abrirReportes(${estudio.id})"
+    title="Reportes"
+  >
+    <img src="assets/icon-reportes.png" alt="Reportes">
+  </button>
+
+  <!-- Botón Audios -->
+  <button 
+    class="btn-accion btn-audios"
+    onclick="abrirAudios(${estudio.id})"
+    title="Audios"
+  >
+    <img src="assets/icon-audios.png" alt="Audios">
+  </button>
+</td>
+`;
 
   const panel = document.createElement("tr");
   panel.classList.add("fila-expandida");
@@ -2295,34 +2546,44 @@ function abrirVisorDesdeTabla(estudioId) {
   abrirModalSeries(est.id);
 }
 
-function actualizarFiltros(){
-  const medicoSet = new Set(estudios.map(e=>e.medico_remitente).filter(Boolean));
-  const medicoSelect = document.getElementById("filterMedico");
-  medicoSelect.innerHTML='<option value="">Todos los Médicos</option>';
-  medicoSet.forEach(m=>{
-    const opt=document.createElement("option");
-    opt.value=m; opt.textContent=m; medicoSelect.appendChild(opt);
-  });
-}
-
 function aplicarFiltros(){
-  const q=(document.getElementById("search").value||"").toLowerCase();
-  const estado=document.getElementById("filterEstado").value;
-  const medico=document.getElementById("filterMedico").value;
-  const numImg=document.getElementById("filterNumImagenes").value;
+  const q = (document.getElementById("search").value || "").toLowerCase();
+  const estado = document.getElementById("filterEstado").value;
+  const medico = document.getElementById("filterMedico").value;
+  const modalidad = document.getElementById("filterModalidad")?.value || "";
+  const desde = document.getElementById("filterFechaDesde").value;
+  const hasta = document.getElementById("filterFechaHasta").value;
 
-  estudiosFiltrados = estudios.filter(e=>{
-    let match=true;
-    if(q && !( (e.nombre||"").toLowerCase().includes(q) || (e.paciente_id||"").toLowerCase().includes(q) || (e.fecha||"").toLowerCase().includes(q) )) match=false;
-    if(estado && e.estado!==estado) match=false;
-    if(medico && e.medico_remitente!==medico) match=false;
-    if(numImg){
-      if(numImg==="4" && e.num_imagenes<4) match=false;
-      else if(numImg!=="4" && e.num_imagenes!=parseInt(numImg)) match=false;
+  estudiosFiltrados = estudios.filter(e => {
+    let match = true;
+
+    // Búsqueda general
+    if (q && !(
+      (e.nombre || "").toLowerCase().includes(q) ||
+      (e.paciente_id || "").toLowerCase().includes(q) ||
+      (e.fecha || "").toLowerCase().includes(q)
+    )) match = false;
+
+    // Filtros
+    if (estado && e.estado !== estado) match = false;
+    if (medico && e.medico_remitente !== medico) match = false;
+    const modalidadEstudio = e.modalidad || "MR";
+    if (modalidad && modalidadEstudio !== modalidad) match = false;
+
+    // Rango de fechas (usa created_at)
+    if (desde || hasta) {
+      const fechaEstudio = new Date(e.created_at).getTime();
+      if (desde && fechaEstudio < new Date(desde).getTime()) match = false;
+      if (hasta && fechaEstudio > new Date(hasta).getTime() + 86399999) match = false; // incluir todo el día
     }
+
     return match;
   });
-  renderTabla();
+
+  // ✅ Renderizar con expansión (QR, botones, etc.)
+  const tbody = document.getElementById("tablaEstudios");
+  tbody.innerHTML = "";
+  estudiosFiltrados.forEach(e => renderEstudioConExpansion(e));
 }
 
 function renderTabla(){
@@ -2332,7 +2593,11 @@ function renderTabla(){
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td>${e.nombre||""}</td>
-      <td>${formatFecha(e.created_at)}</td>
+      <td>
+                    <div class="text-sm font-medium">${formatFechaCorta(estudio.created_at) || "--"}</div>
+                    <div class="text-xs text-gray-600 mt-1">Hora de registro: ${formatHora12(estudio.created_at) || "--"}</div>
+                    <div class="text-[10px] text-gray-500 mt-1">${tiempoTranscurrido(estudio.created_at)}</div>
+               </td>
       <td>${formatNacimiento(e.nacimiento)}</td>
       <td>${e.descripcion||""}</td>
       <td>${e.paciente_id||""}</td>
@@ -2783,6 +3048,21 @@ function moveMagnifier(e) {
 function hideMagnifier() {
   if (magnifierDiv) magnifierDiv.style.display = "none";
 }
+
+// Abrir calendario al hacer clic en el contenedor del input date
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.filtro-date-container').forEach(container => {
+    container.addEventListener('click', function(e) {
+      if (e.target.tagName !== 'BUTTON') { // Evitar abrir si hacen clic en el botón ×
+        const input = this.querySelector('input[type="date"]');
+        if (input) {
+          input.focus(); // Esto abre el calendario en la mayoría de navegadores
+        }
+      }
+    });
+  });
+});
+
 </script>
 </body>
 </html>
